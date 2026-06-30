@@ -24,6 +24,12 @@ public final class Interpreter implements Opcodes {
                 int value = ((insns[pc] & 0xFF) << 24) | ((insns[pc + 1] & 0xFF) << 16) | ((insns[pc + 2] & 0xFF) << 8) | (insns[pc + 3] & 0xFF);
                 pc += 4;
                 frame.getStack().push(value);
+            } else if (opcode == LOCAL_GET) {
+                int index = insns[pc++] & 0xFF;
+                frame.getStack().push(frame.getLocals().get(index));
+            } else if (opcode == LOCAL_SET) {
+                int index = insns[pc++] & 0xFF;
+                frame.getLocals().set(index, frame.getStack().pop());
             } else if (opcode == RETURN) {
                 return frame.getStack().pop();
             }

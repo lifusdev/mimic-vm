@@ -27,8 +27,8 @@ public final class Interpreter implements Opcodes {
                 pc += 4;
                 frame.getStack().push(Value.i32(value));
             } else if (opc == LOCAL_GET) {
-                final int index = insns[pc++] & 0xFF;
-                frame.getStack().push(frame.getLocals().get(index));
+                final int idx = insns[pc++] & 0xFF;
+                frame.getStack().push(frame.getLocals().get(idx));
             } else if (opc == LOCAL_SET) {
                 final int index = insns[pc++] & 0xFF;
                 frame.getLocals().set(index, frame.getStack().pop());

@@ -20,7 +20,7 @@ class VmTest implements Opcodes {
         };
 
 
-        final Value result = new Interpreter(new VMethod(2, 0, insns)).run();
+        final Value result = new Interpreter(new VMethod(0, 2, 0, insns)).run();
         assertEquals(Value.i32(13), result);
     }
 }

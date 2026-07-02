@@ -56,7 +56,12 @@ public final class Interpreter implements Opcodes {
             } else if (opc == CALL) {
                 final int methodIdx = insns[pc++] & 0xFF;
                 final VMethod callee = module.method(methodIdx);
-                callStack.push(new Frame(callee));
+                final Frame calleeFrame = new Frame(callee);
+
+                for (int i = callee.paramCount() - 1; i >= 0; i--) {
+                    calleeFrame.getLocals().set(i, frame.getStack().pop());
+                }
+                callStack.push(calleeFrame);
             } else if (opc == RETURN) {
                 final Value result = frame.getStack().pop();
                 callStack.pop();

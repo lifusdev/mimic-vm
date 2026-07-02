@@ -14,4 +14,6 @@ public interface Opcodes {
     int RETURN_VOID = 0x21;
 
     int CALL = 0x22;
+
+    int JUMP = 0x30;
 }

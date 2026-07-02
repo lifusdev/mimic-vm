@@ -149,4 +149,21 @@ class VmTest implements Opcodes {
         // 0+1+2+3+4+5+6+7+8+9 = 45
         assertEquals(Value.i32(45), result);
     }
+
+    @Test
+    void divTest() {
+
+        final byte[] insns = {
+                (byte) I32_CONST, 0x0, 0x0, 0x0, 0x7, // 7
+                (byte) I32_CONST, 0x0, 0x0, 0x0, 0x2, // 2
+                (byte) I32_DIV, // div
+                (byte) RETURN
+        };
+
+        final VModule module = new VModule(new VMethod[]{new VMethod(0, 2, 0, insns)});
+
+        final Value result = new Interpreter(module, 0).run();
+
+        assertEquals(Value.i32(3), result);
+    }
 }

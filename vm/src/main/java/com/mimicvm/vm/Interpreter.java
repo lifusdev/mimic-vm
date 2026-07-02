@@ -66,6 +66,17 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(Value.i32(a * b));
                 }
 
+                case I32_DIV -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+
+                    if (b == 0) {
+                        throw new ArithmeticException("Division by zero");
+                    }
+
+                    frame.getStack().push(Value.i32(a / b));
+                }
+
                 case CALL -> {
                     final int methodIdx = insns[pc++] & 0xFF;
                     final VMethod callee = module.method(methodIdx);

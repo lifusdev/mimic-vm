@@ -9,6 +9,7 @@ public interface Opcodes {
     int I32_ADD = 0x10;
     int I32_SUB = 0x11;
     int I32_MUL = 0x12;
+    int I32_DIV = 0x13;
 
     int RETURN = 0x20;
     int RETURN_VOID = 0x21;

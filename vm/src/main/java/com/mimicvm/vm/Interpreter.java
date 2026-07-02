@@ -80,6 +80,15 @@ public final class Interpreter implements Opcodes {
 
                 case JUMP -> pc = ByteUtils.readI32(insns, pc);
 
+                case JUMP_IF -> {
+                    final int target = ByteUtils.readI32(insns, pc);
+                    pc += 4;
+
+                    if (frame.getStack().pop().data() != 0) {
+                        pc = target;
+                    }
+                }
+
                 case I32_EQ -> {
                     final int b = frame.getStack().pop().data();
                     final int a = frame.getStack().pop().data();

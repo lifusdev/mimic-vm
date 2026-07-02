@@ -17,4 +17,5 @@ public interface Opcodes {
 
     int JUMP = 0x30;
     int I32_EQ = 0x31;
+    int JUMP_IF = 0x32;
 }

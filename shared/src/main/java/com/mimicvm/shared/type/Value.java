@@ -16,11 +16,19 @@ public record Value(Type type, long bits) {
         return new Value(Type.I64, data);
     }
 
+    public static Value f64(double data) {
+        return new Value(Type.F64, Double.doubleToRawLongBits(data));
+    }
+
     public int data() {
         return (int) bits;
     }
 
     public long asI64() {
         return bits;
+    }
+
+    public double asF64() {
+        return Double.longBitsToDouble(bits);
     }
 }

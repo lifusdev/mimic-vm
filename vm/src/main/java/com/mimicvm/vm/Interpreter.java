@@ -112,6 +112,30 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(Value.i32(a < b ? 1 : 0));
                 }
 
+                case I32_GT -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a > b ? 1 : 0));
+                }
+
+                case I32_LE -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a <= b ? 1 : 0));
+                }
+
+                case I32_GE -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a >= b ? 1 : 0));
+                }
+
+                case I32_NE -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a != b ? 1 : 0));
+                }
+
                 case RETURN -> {
                     final Value result = frame.getStack().pop();
                     callStack.pop();

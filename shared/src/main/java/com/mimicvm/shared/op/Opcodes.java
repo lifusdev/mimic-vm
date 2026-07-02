@@ -20,4 +20,8 @@ public interface Opcodes {
     int I32_EQ = 0x31;
     int JUMP_IF = 0x32;
     int I32_LT = 0x33;
+    int I32_GT = 0x34;
+    int I32_LE = 0x35;
+    int I32_GE = 0x36;
+    int I32_NE = 0x37;
 }

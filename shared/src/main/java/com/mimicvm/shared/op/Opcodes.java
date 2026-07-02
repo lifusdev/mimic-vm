@@ -16,4 +16,5 @@ public interface Opcodes {
     int CALL = 0x22;
 
     int JUMP = 0x30;
+    int I32_EQ = 0x31;
 }

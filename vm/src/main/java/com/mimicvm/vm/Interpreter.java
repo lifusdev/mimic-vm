@@ -64,6 +64,10 @@ public final class Interpreter implements Opcodes {
                 callStack.push(calleeFrame);
             } else if (opc == JUMP) {
                 pc = ByteUtils.readI32(insns, pc);
+            } else if (opc == I32_EQ) {
+                final int b = frame.getStack().pop().data();
+                final int a = frame.getStack().pop().data();
+                frame.getStack().push(Value.i32(a == b ? 1 : 0));
             } else if (opc == RETURN) {
                 final Value result = frame.getStack().pop();
                 callStack.pop();

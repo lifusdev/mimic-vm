@@ -106,6 +106,47 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(Value.i32(a % b));
                 }
 
+                case I32_NEG -> {
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(-a));
+                }
+
+                case I32_AND -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a & b));
+                }
+
+                case I32_OR -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a | b));
+                }
+
+                case I32_XOR -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a ^ b));
+                }
+
+                case I32_SHL -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a << b));
+                }
+
+                case I32_SHR -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a >> b));
+                }
+
+                case I32_USHR -> {
+                    final int b = frame.getStack().pop().data();
+                    final int a = frame.getStack().pop().data();
+                    frame.getStack().push(Value.i32(a >>> b));
+                }
+
                 case I64_ADD -> {
                     final long b = frame.getStack().pop().asI64();
                     final long a = frame.getStack().pop().asI64();

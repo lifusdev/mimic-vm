@@ -16,6 +16,10 @@ public record Value(Type type, long bits) {
         return new Value(Type.I64, data);
     }
 
+    public static Value f32(float data) {
+        return new Value(Type.F32, Float.floatToRawIntBits(data) & 0xFFFFFFFFL);
+    }
+
     public static Value f64(double data) {
         return new Value(Type.F64, Double.doubleToRawLongBits(data));
     }
@@ -26,6 +30,10 @@ public record Value(Type type, long bits) {
 
     public long asI64() {
         return bits;
+    }
+
+    public float asF32() {
+        return Float.intBitsToFloat((int) bits);
     }
 
     public double asF64() {

@@ -50,6 +50,12 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(Value.f64(Double.longBitsToDouble(value)));
                 }
 
+                case F32_CONST -> {
+                    final int value = ByteUtils.readI32(insns, pc);
+                    pc += 4;
+                    frame.getStack().push(Value.f32(Float.intBitsToFloat(value)));
+                }
+
                 case LOCAL_GET -> {
                     final int idx = insns[pc++] & 0xFF;
                     frame.getStack().push(frame.getLocals().get(idx));
@@ -140,6 +146,30 @@ public final class Interpreter implements Opcodes {
                     final double b = frame.getStack().pop().asF64();
                     final double a = frame.getStack().pop().asF64();
                     frame.getStack().push(Value.f64(a / b));
+                }
+
+                case F32_ADD -> {
+                    final float b = frame.getStack().pop().asF32();
+                    final float a = frame.getStack().pop().asF32();
+                    frame.getStack().push(Value.f32(a + b));
+                }
+
+                case F32_SUB -> {
+                    final float b = frame.getStack().pop().asF32();
+                    final float a = frame.getStack().pop().asF32();
+                    frame.getStack().push(Value.f32(a - b));
+                }
+
+                case F32_MUL -> {
+                    final float b = frame.getStack().pop().asF32();
+                    final float a = frame.getStack().pop().asF32();
+                    frame.getStack().push(Value.f32(a * b));
+                }
+
+                case F32_DIV -> {
+                    final float b = frame.getStack().pop().asF32();
+                    final float a = frame.getStack().pop().asF32();
+                    frame.getStack().push(Value.f32(a / b));
                 }
 
                 case CALL -> {

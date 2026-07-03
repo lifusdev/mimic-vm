@@ -26,6 +26,22 @@ public interface Opcodes {
     int POP = 0x41;
     int SWAP = 0x42;
 
+    int I2L = 0x50;
+    int I2F = 0x51;
+    int I2D = 0x52;
+
+    int L2I = 0x53;
+    int L2F = 0x54;
+    int L2D = 0x55;
+
+    int F2I = 0x56;
+    int F2L = 0x57;
+    int F2D = 0x58;
+
+    int D2I = 0x59;
+    int D2L = 0x5A;
+    int D2F = 0x5B;
+
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;
     int I64_MUL = 0x16;

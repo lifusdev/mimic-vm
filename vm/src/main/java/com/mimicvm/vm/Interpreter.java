@@ -162,6 +162,22 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(b);
                 }
 
+                case I2L -> frame.getStack().push(Value.i64(frame.getStack().pop().data()));
+                case I2F -> frame.getStack().push(Value.f32(frame.getStack().pop().data()));
+                case I2D -> frame.getStack().push(Value.f64(frame.getStack().pop().data()));
+
+                case L2I -> frame.getStack().push(Value.i32((int) frame.getStack().pop().asI64()));
+                case L2F -> frame.getStack().push(Value.f32((float) frame.getStack().pop().asI64()));
+                case L2D -> frame.getStack().push(Value.f64((double) frame.getStack().pop().asI64()));
+
+                case F2I -> frame.getStack().push(Value.i32((int) frame.getStack().pop().asF32()));
+                case F2L -> frame.getStack().push(Value.i64((long) frame.getStack().pop().asF32()));
+                case F2D -> frame.getStack().push(Value.f64(frame.getStack().pop().asF32()));
+
+                case D2I -> frame.getStack().push(Value.i32((int) frame.getStack().pop().asF64()));
+                case D2L -> frame.getStack().push(Value.i64((long) frame.getStack().pop().asF64()));
+                case D2F -> frame.getStack().push(Value.f32((float) frame.getStack().pop().asF64()));
+
                 case I64_ADD -> {
                     final long b = frame.getStack().pop().asI64();
                     final long a = frame.getStack().pop().asI64();

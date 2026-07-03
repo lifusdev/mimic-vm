@@ -22,6 +22,10 @@ public interface Opcodes {
     int I32_SHR = 0x3E;
     int I32_USHR = 0x3F;
 
+    int DUP = 0x40;
+    int POP = 0x41;
+    int SWAP = 0x42;
+
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;
     int I64_MUL = 0x16;

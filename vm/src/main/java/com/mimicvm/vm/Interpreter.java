@@ -147,6 +147,21 @@ public final class Interpreter implements Opcodes {
                     frame.getStack().push(Value.i32(a >>> b));
                 }
 
+                case DUP -> {
+                    final Value top = frame.getStack().pop();
+                    frame.getStack().push(top);
+                    frame.getStack().push(top);
+                }
+
+                case POP -> frame.getStack().pop();
+
+                case SWAP -> {
+                    final Value a = frame.getStack().pop();
+                    final Value b = frame.getStack().pop();
+                    frame.getStack().push(a);
+                    frame.getStack().push(b);
+                }
+
                 case I64_ADD -> {
                     final long b = frame.getStack().pop().asI64();
                     final long a = frame.getStack().pop().asI64();

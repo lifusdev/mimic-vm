@@ -16,10 +16,10 @@ public record VMethod(int paramCount, int maxStack, int maxLocals, byte[] insns)
         }
 
         if (paramCount < 0) {
-            throw new IllegalArgumentException("param count must not be negative");
+            throw new IllegalArgumentException("paramCount must not be negative");
         }
         if (paramCount > maxLocals) {
-            throw new IllegalArgumentException("param count must not be greater than max locals");
+            throw new IllegalArgumentException("paramCount must not be greater than maxLocals");
         }
     }
 }

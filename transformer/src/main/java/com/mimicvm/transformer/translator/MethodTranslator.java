@@ -54,6 +54,17 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.IF_ICMPGT -> assembler.op(I32_GT).op(JUMP_IF);
             case Opcodes.IF_ICMPLE -> assembler.op(I32_LE).op(JUMP_IF);
 
+            /*
+              while the jvm has its own opcodes for this,
+              I simply add a 0
+             */
+            case Opcodes.IFEQ -> assembler.op(I32_CONST).i32(0).op(I32_EQ).op(JUMP_IF);
+            case Opcodes.IFNE -> assembler.op(I32_CONST).i32(0).op(I32_NE).op(JUMP_IF);
+            case Opcodes.IFLT -> assembler.op(I32_CONST).i32(0).op(I32_LT).op(JUMP_IF);
+            case Opcodes.IFGE -> assembler.op(I32_CONST).i32(0).op(I32_GE).op(JUMP_IF);
+            case Opcodes.IFGT -> assembler.op(I32_CONST).i32(0).op(I32_GT).op(JUMP_IF);
+            case Opcodes.IFLE -> assembler.op(I32_CONST).i32(0).op(I32_LE).op(JUMP_IF);
+
             // not yet supported
             default -> {
                 return;
@@ -81,6 +92,14 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.IRETURN -> assembler.op(RETURN);
             case Opcodes.RETURN -> assembler.op(RETURN_VOID);
         }
+    }
+
+    @Override
+    public void visitIincInsn(int index, int increment) {
+        assembler.op(LOCAL_GET).u8(index);
+        assembler.op(I32_CONST).i32(increment);
+        assembler.op(I32_ADD);
+        assembler.op(LOCAL_SET).u8(index);
     }
 
     @Override

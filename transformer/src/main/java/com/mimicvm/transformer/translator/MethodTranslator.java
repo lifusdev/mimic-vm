@@ -83,13 +83,27 @@ public final class MethodTranslator extends MethodVisitor {
             return;
         }
 
+        if (opc == Opcodes.LCONST_0) {
+            assembler.op(I64_CONST).i64(0);
+            return;
+        }
+        if (opc == Opcodes.LCONST_1) {
+            assembler.op(I64_CONST).i64(1);
+            return;
+        }
+
         switch (opc) {
             case Opcodes.IADD -> assembler.op(I32_ADD);
             case Opcodes.ISUB -> assembler.op(I32_SUB);
             case Opcodes.IMUL -> assembler.op(I32_MUL);
             case Opcodes.IDIV -> assembler.op(I32_DIV);
 
-            case Opcodes.IRETURN -> assembler.op(RETURN);
+            case Opcodes.LADD -> assembler.op(I64_ADD);
+            case Opcodes.LSUB -> assembler.op(I64_SUB);
+            case Opcodes.LMUL -> assembler.op(I64_MUL);
+            case Opcodes.LDIV -> assembler.op(I64_DIV);
+
+            case Opcodes.IRETURN, Opcodes.LRETURN -> assembler.op(RETURN);
             case Opcodes.RETURN -> assembler.op(RETURN_VOID);
         }
     }
@@ -105,8 +119,8 @@ public final class MethodTranslator extends MethodVisitor {
     @Override
     public void visitVarInsn(int opc, int index) {
         switch (opc) {
-            case Opcodes.ILOAD -> assembler.op(LOCAL_GET).u8(index);
-            case Opcodes.ISTORE -> assembler.op(LOCAL_SET).u8(index);
+            case Opcodes.ILOAD, Opcodes.LLOAD -> assembler.op(LOCAL_GET).u8(index);
+            case Opcodes.ISTORE, Opcodes.LSTORE -> assembler.op(LOCAL_SET).u8(index);
         }
     }
 
@@ -121,6 +135,8 @@ public final class MethodTranslator extends MethodVisitor {
     public void visitLdcInsn(Object value) {
         if (value instanceof Integer i) {
             assembler.op(I32_CONST).i32(i);
+        } else if (value instanceof Long l) {
+            assembler.op(I64_CONST).i64(l);
         }
     }
 

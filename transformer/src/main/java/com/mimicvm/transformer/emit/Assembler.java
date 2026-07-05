@@ -24,6 +24,13 @@ public final class Assembler {
         return this;
     }
 
+    public Assembler i64(long value) {
+        for (int shift = 56; shift >= 0; shift -= 8) {
+            baos.write((int) ((value >>> shift) & 0xFF));
+        }
+        return this;
+    }
+
     // current write pos
     public int pos() {
         return baos.size();

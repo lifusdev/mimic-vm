@@ -23,7 +23,7 @@ public final class Interpreter implements Opcodes {
         this.module = module;
 
         final Frame entry = new Frame(module.method(methodIdx));
-        
+
         for (int i = 0; i < args.length; i++) {
             entry.getLocals().set(i, args[i]);
         }

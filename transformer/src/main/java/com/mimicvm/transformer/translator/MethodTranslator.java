@@ -92,6 +92,28 @@ public final class MethodTranslator extends MethodVisitor {
             return;
         }
 
+        if (opc == Opcodes.FCONST_0) {
+            assembler.op(F32_CONST).i32(Float.floatToRawIntBits(0f));
+            return;
+        }
+        if (opc == Opcodes.FCONST_1) {
+            assembler.op(F32_CONST).i32(Float.floatToRawIntBits(1f));
+            return;
+        }
+        if (opc == Opcodes.FCONST_2) {
+            assembler.op(F32_CONST).i32(Float.floatToRawIntBits(2f));
+            return;
+        }
+
+        if (opc == Opcodes.DCONST_0) {
+            assembler.op(F64_CONST).i64(Double.doubleToRawLongBits(0.0));
+            return;
+        }
+        if (opc == Opcodes.DCONST_1) {
+            assembler.op(F64_CONST).i64(Double.doubleToRawLongBits(1.0));
+            return;
+        }
+
         switch (opc) {
             case Opcodes.IADD -> assembler.op(I32_ADD);
             case Opcodes.ISUB -> assembler.op(I32_SUB);
@@ -103,7 +125,17 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.LMUL -> assembler.op(I64_MUL);
             case Opcodes.LDIV -> assembler.op(I64_DIV);
 
-            case Opcodes.IRETURN, Opcodes.LRETURN -> assembler.op(RETURN);
+            case Opcodes.FADD -> assembler.op(F32_ADD);
+            case Opcodes.FSUB -> assembler.op(F32_SUB);
+            case Opcodes.FMUL -> assembler.op(F32_MUL);
+            case Opcodes.FDIV -> assembler.op(F32_DIV);
+
+            case Opcodes.DADD -> assembler.op(F64_ADD);
+            case Opcodes.DSUB -> assembler.op(F64_SUB);
+            case Opcodes.DMUL -> assembler.op(F64_MUL);
+            case Opcodes.DDIV -> assembler.op(F64_DIV);
+
+            case Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN -> assembler.op(RETURN);
             case Opcodes.RETURN -> assembler.op(RETURN_VOID);
         }
     }
@@ -119,8 +151,8 @@ public final class MethodTranslator extends MethodVisitor {
     @Override
     public void visitVarInsn(int opc, int index) {
         switch (opc) {
-            case Opcodes.ILOAD, Opcodes.LLOAD -> assembler.op(LOCAL_GET).u8(index);
-            case Opcodes.ISTORE, Opcodes.LSTORE -> assembler.op(LOCAL_SET).u8(index);
+            case Opcodes.ILOAD, Opcodes.LLOAD, Opcodes.FLOAD, Opcodes.DLOAD -> assembler.op(LOCAL_GET).u8(index);
+            case Opcodes.ISTORE, Opcodes.LSTORE, Opcodes.FSTORE, Opcodes.DSTORE -> assembler.op(LOCAL_SET).u8(index);
         }
     }
 
@@ -137,6 +169,10 @@ public final class MethodTranslator extends MethodVisitor {
             assembler.op(I32_CONST).i32(i);
         } else if (value instanceof Long l) {
             assembler.op(I64_CONST).i64(l);
+        } else if (value instanceof Float f) {
+            assembler.op(F32_CONST).i32(Float.floatToRawIntBits(f));
+        } else if (value instanceof Double d) {
+            assembler.op(F64_CONST).i64(Double.doubleToRawLongBits(d));
         }
     }
 

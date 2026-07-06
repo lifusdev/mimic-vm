@@ -45,9 +45,27 @@ public interface Opcodes {
     int D2L = 0x5A;
     int D2F = 0x5B;
 
+    int I2B = 0x5C;
+    int I2C = 0x5D;
+    int I2S = 0x5E;
+
     int I64_CMP = 0x60;
     int F32_CMP = 0x61;
     int F64_CMP = 0x62;
+
+    int I64_NEG = 0x63;
+    int I64_REM = 0x64;
+    int I64_AND = 0x65;
+    int I64_OR = 0x66;
+    int I64_XOR = 0x67;
+    int I64_SHL = 0x68;
+    int I64_SHR = 0x69;
+    int I64_USHR = 0x6A;
+
+    int F32_NEG = 0x6B;
+    int F64_NEG = 0x6C;
+    int F32_REM = 0x6D;
+    int F64_REM = 0x6E;
 
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;

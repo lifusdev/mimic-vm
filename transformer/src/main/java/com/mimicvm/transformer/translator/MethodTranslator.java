@@ -161,6 +161,14 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.LSUB -> assembler.op(I64_SUB);
             case Opcodes.LMUL -> assembler.op(I64_MUL);
             case Opcodes.LDIV -> assembler.op(I64_DIV);
+            case Opcodes.LNEG -> assembler.op(I64_NEG);
+            case Opcodes.LREM -> assembler.op(I64_REM);
+            case Opcodes.LAND -> assembler.op(I64_AND);
+            case Opcodes.LOR -> assembler.op(I64_OR);
+            case Opcodes.LXOR -> assembler.op(I64_XOR);
+            case Opcodes.LSHL -> assembler.op(I64_SHL);
+            case Opcodes.LSHR -> assembler.op(I64_SHR);
+            case Opcodes.LUSHR -> assembler.op(I64_USHR);
 
             case Opcodes.FADD -> assembler.op(F32_ADD);
             case Opcodes.FSUB -> assembler.op(F32_SUB);
@@ -171,6 +179,10 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.DSUB -> assembler.op(F64_SUB);
             case Opcodes.DMUL -> assembler.op(F64_MUL);
             case Opcodes.DDIV -> assembler.op(F64_DIV);
+            case Opcodes.FNEG -> assembler.op(F32_NEG);
+            case Opcodes.DNEG -> assembler.op(F64_NEG);
+            case Opcodes.FREM -> assembler.op(F32_REM);
+            case Opcodes.DREM -> assembler.op(F64_REM);
             case Opcodes.LCMP -> assembler.op(I64_CMP);
             case Opcodes.FCMPL, Opcodes.FCMPG -> assembler.op(F32_CMP);
             case Opcodes.DCMPL, Opcodes.DCMPG -> assembler.op(F64_CMP);
@@ -187,6 +199,10 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.D2I -> assembler.op(D2I);
             case Opcodes.D2L -> assembler.op(D2L);
             case Opcodes.D2F -> assembler.op(D2F);
+
+            case Opcodes.I2B -> assembler.op(I2B);
+            case Opcodes.I2C -> assembler.op(I2C);
+            case Opcodes.I2S -> assembler.op(I2S);
 
             case Opcodes.DUP -> assembler.op(DUP);
             case Opcodes.POP -> assembler.op(POP);

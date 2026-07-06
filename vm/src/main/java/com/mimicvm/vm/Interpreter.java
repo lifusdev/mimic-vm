@@ -168,6 +168,10 @@ public final class Interpreter implements Opcodes {
                 case D2L -> frame.stack().push(Value.i64((long) frame.stack().pop().asF64()));
                 case D2F -> frame.stack().push(Value.f32((float) frame.stack().pop().asF64()));
 
+                case I2B -> frame.stack().push(Value.i32((byte) frame.stack().pop().data()));
+                case I2C -> frame.stack().push(Value.i32((char) frame.stack().pop().data()));
+                case I2S -> frame.stack().push(Value.i32((short) frame.stack().pop().data()));
+
                 case I64_CMP -> {
                     final long b = frame.stack().pop().asI64();
                     final long a = frame.stack().pop().asI64();
@@ -213,6 +217,70 @@ public final class Interpreter implements Opcodes {
                     }
 
                     frame.stack().push(Value.i64(a / b));
+                }
+
+                case I64_NEG -> frame.stack().push(Value.i64(-frame.stack().pop().asI64()));
+
+                case I64_REM -> {
+                    final long b = frame.stack().pop().asI64();
+                    final long a = frame.stack().pop().asI64();
+
+                    if (b == 0) {
+                        throw new ArithmeticException("Division by zero");
+                    }
+
+                    frame.stack().push(Value.i64(a % b));
+                }
+
+                case I64_AND -> {
+                    final long b = frame.stack().pop().asI64();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a & b));
+                }
+
+                case I64_OR -> {
+                    final long b = frame.stack().pop().asI64();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a | b));
+                }
+
+                case I64_XOR -> {
+                    final long b = frame.stack().pop().asI64();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a ^ b));
+                }
+
+                case I64_SHL -> {
+                    final int b = frame.stack().pop().data();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a << b));
+                }
+
+                case I64_SHR -> {
+                    final int b = frame.stack().pop().data();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a >> b));
+                }
+
+                case I64_USHR -> {
+                    final int b = frame.stack().pop().data();
+                    final long a = frame.stack().pop().asI64();
+                    frame.stack().push(Value.i64(a >>> b));
+                }
+
+                case F32_NEG -> frame.stack().push(Value.f32(-frame.stack().pop().asF32()));
+                case F64_NEG -> frame.stack().push(Value.f64(-frame.stack().pop().asF64()));
+
+                case F32_REM -> {
+                    final float b = frame.stack().pop().asF32();
+                    final float a = frame.stack().pop().asF32();
+                    frame.stack().push(Value.f32(a % b));
+                }
+
+                case F64_REM -> {
+                    final double b = frame.stack().pop().asF64();
+                    final double a = frame.stack().pop().asF64();
+                    frame.stack().push(Value.f64(a % b));
                 }
 
                 case F64_ADD -> {

@@ -63,11 +63,9 @@ class TransformerTest {
 
         final byte[] bytes = classWriter.toByteArray();
 
-        final List<byte[]> methods = new Transformer(bytes).translate();
+        final List<VMethod> methods = new Transformer(bytes).translate();
 
-        final VModule module = new VModule(new VMethod[]{
-                new VMethod(0, 2, 0, methods.getFirst())
-        });
+        final VModule module = new VModule(methods.toArray(new VMethod[0]));
 
         final Value result = new Interpreter(module, 0).run();
 
@@ -122,11 +120,9 @@ class TransformerTest {
 
         final byte[] bytes = classWriter.toByteArray();
 
-        final List<byte[]> methods = new Transformer(bytes).translate();
+        final List<VMethod> methods = new Transformer(bytes).translate();
 
-        final VModule module = new VModule(new VMethod[]{
-                new VMethod(0, 2, 3, methods.getFirst())
-        });
+        final VModule module = new VModule(methods.toArray(new VMethod[0]));
 
         final Value result = new Interpreter(module, 0).run();
 

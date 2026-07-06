@@ -1,4 +1,4 @@
-package com.mimicvm.vm;
+package com.mimicvm.vm.frame;
 
 import com.mimicvm.shared.type.Value;
 

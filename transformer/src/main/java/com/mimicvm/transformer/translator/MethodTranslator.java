@@ -1,6 +1,8 @@
 package com.mimicvm.transformer.translator;
 
+import com.mimicvm.shared.method.VMethod;
 import com.mimicvm.shared.utils.ByteUtils;
+import com.mimicvm.shared.utils.DescUtils;
 import com.mimicvm.transformer.emit.Assembler;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -17,20 +19,47 @@ import static com.mimicvm.shared.op.Opcodes.*;
 public final class MethodTranslator extends MethodVisitor {
 
     private final Assembler assembler = new Assembler();
-    private final Consumer<byte[]> onDone;
+    private final IMethodIdx table;
+    private final Consumer<VMethod> onDone;
+
+    private final int paramCount;
+
+    private int maxStack;
+    private int maxLocals;
 
     // stores the byte pos of a label
     private final Map<Label, Integer> labelOffsets = new HashMap<>();
 
-    // https://www.geeksforgeeks.org/compiler-design/backpatching-in-compiler-design/
     private record Patch(int pos, Label target) {
     }
 
     private final List<Patch> patches = new ArrayList<>();
 
-    public MethodTranslator(Consumer<byte[]> onDone) {
+    public MethodTranslator(IMethodIdx table, int access, String desc, Consumer<VMethod> onDone) {
         super(Opcodes.ASM9);
+        this.table = table;
         this.onDone = onDone;
+
+        final boolean isStatic = (access & Opcodes.ACC_STATIC) != 0;
+        this.paramCount = DescUtils.paramCount(desc) + (isStatic ? 0 : 1);
+    }
+
+    @Override
+    public void visitMaxs(int maxStack, int maxLocals) {
+        this.maxStack = maxStack;
+        this.maxLocals = maxLocals;
+    }
+
+    @Override
+    public void visitMethodInsn(int opc, String owner, String name, String desc, boolean isInterface) {
+        if (opc == Opcodes.INVOKESTATIC) {
+            final int idx = table.indexOf(name, desc);
+
+            // not yet supported
+            if (idx >= 0) {
+                assembler.op(CALL).u8(idx);
+            }
+        }
     }
 
     @Override
@@ -214,6 +243,7 @@ public final class MethodTranslator extends MethodVisitor {
             ByteUtils.writeI32(code, patch.pos(), target);
         }
 
-        onDone.accept(code);
+
+        onDone.accept(new VMethod(paramCount, maxStack, maxLocals, code));
     }
 }

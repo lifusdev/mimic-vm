@@ -1,5 +1,8 @@
 package com.mimicvm.shared.op;
 
+/**
+ * mimicvm instruction set
+ */
 public interface Opcodes {
 
     int I32_CONST = 0x1;

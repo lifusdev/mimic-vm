@@ -1,38 +1,34 @@
-package com.mimicvm.vm;
+package com.mimicvm.vm.frame;
 
 import com.mimicvm.shared.method.VMethod;
 
 public final class Frame {
 
     private final VMethod method;
-    private final LocalVarArray locals;
+    private final Locals locals;
     private final Stack stack;
-
-    private int pc = 0;
+    private final Cursor cursor;
 
     public Frame(VMethod method) {
         this.method = method;
-        this.locals = new LocalVarArray(method.maxLocals());
+        this.locals = new Locals(method.maxLocals());
         this.stack = new Stack(method.maxStack());
+        this.cursor = new Cursor(method.insns());
     }
 
-    public VMethod getMethod() {
+    public VMethod method() {
         return method;
     }
 
-    public LocalVarArray getLocals() {
+    public Locals locals() {
         return locals;
     }
 
-    public Stack getStack() {
+    public Stack stack() {
         return stack;
     }
 
-    public int getPc() {
-        return pc;
-    }
-
-    public void setPc(int pc) {
-        this.pc = pc;
+    public Cursor cursor() {
+        return cursor;
     }
 }

@@ -1,12 +1,12 @@
-package com.mimicvm.vm;
+package com.mimicvm.vm.frame;
 
 import com.mimicvm.shared.type.Value;
 
-public final class LocalVarArray {
+public final class Locals {
 
     private final Value[] slots;
 
-    public LocalVarArray(int max) {
+    public Locals(int max) {
         this.slots = new Value[max];
     }
 

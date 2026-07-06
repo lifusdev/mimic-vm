@@ -119,6 +119,14 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.ISUB -> assembler.op(I32_SUB);
             case Opcodes.IMUL -> assembler.op(I32_MUL);
             case Opcodes.IDIV -> assembler.op(I32_DIV);
+            case Opcodes.IREM -> assembler.op(I32_MOD);
+            case Opcodes.INEG -> assembler.op(I32_NEG);
+            case Opcodes.IAND -> assembler.op(I32_AND);
+            case Opcodes.IOR -> assembler.op(I32_OR);
+            case Opcodes.IXOR -> assembler.op(I32_XOR);
+            case Opcodes.ISHL -> assembler.op(I32_SHL);
+            case Opcodes.ISHR -> assembler.op(I32_SHR);
+            case Opcodes.IUSHR -> assembler.op(I32_USHR);
 
             case Opcodes.LADD -> assembler.op(I64_ADD);
             case Opcodes.LSUB -> assembler.op(I64_SUB);
@@ -134,6 +142,26 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.DSUB -> assembler.op(F64_SUB);
             case Opcodes.DMUL -> assembler.op(F64_MUL);
             case Opcodes.DDIV -> assembler.op(F64_DIV);
+            case Opcodes.LCMP -> assembler.op(I64_CMP);
+            case Opcodes.FCMPL, Opcodes.FCMPG -> assembler.op(F32_CMP);
+            case Opcodes.DCMPL, Opcodes.DCMPG -> assembler.op(F64_CMP);
+
+            case Opcodes.I2L -> assembler.op(I2L);
+            case Opcodes.I2F -> assembler.op(I2F);
+            case Opcodes.I2D -> assembler.op(I2D);
+            case Opcodes.L2I -> assembler.op(L2I);
+            case Opcodes.L2F -> assembler.op(L2F);
+            case Opcodes.L2D -> assembler.op(L2D);
+            case Opcodes.F2I -> assembler.op(F2I);
+            case Opcodes.F2L -> assembler.op(F2L);
+            case Opcodes.F2D -> assembler.op(F2D);
+            case Opcodes.D2I -> assembler.op(D2I);
+            case Opcodes.D2L -> assembler.op(D2L);
+            case Opcodes.D2F -> assembler.op(D2F);
+
+            case Opcodes.DUP -> assembler.op(DUP);
+            case Opcodes.POP -> assembler.op(POP);
+            case Opcodes.SWAP -> assembler.op(SWAP);
 
             case Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN -> assembler.op(RETURN);
             case Opcodes.RETURN -> assembler.op(RETURN_VOID);

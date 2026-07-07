@@ -237,6 +237,8 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.IASTORE, Opcodes.LASTORE, Opcodes.FASTORE, Opcodes.DASTORE, Opcodes.AASTORE, Opcodes.BASTORE,
                  Opcodes.CASTORE, Opcodes.SASTORE -> assembler.op(ARRAY_SET);
 
+            case Opcodes.ARRAYLENGTH -> assembler.op(ARRAY_LEN);
+
             case Opcodes.DUP -> assembler.op(DUP);
             case Opcodes.POP -> assembler.op(POP);
             case Opcodes.SWAP -> assembler.op(SWAP);

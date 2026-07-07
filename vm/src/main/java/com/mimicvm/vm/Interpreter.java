@@ -432,6 +432,11 @@ public final class Interpreter implements Opcodes {
                     heap.get(ref).field(idx, value);
                 }
 
+                case ARRAY_LEN -> {
+                    final int ref = frame.stack().pop().refId();
+                    frame.stack().push(Value.i32(heap.get(ref).len()));
+                }
+
                 case GET_FIELD -> {
                     final int idx = cursor.nextU8();
                     final int ref = frame.stack().pop().refId();

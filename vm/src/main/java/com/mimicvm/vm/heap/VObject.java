@@ -22,4 +22,8 @@ public final class VObject {
     public void field(int idx, Value value) {
         fields[idx] = value;
     }
+
+    public int len() {
+        return fields.length;
+    }
 }

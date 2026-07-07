@@ -164,6 +164,8 @@ public final class MethodTranslator extends MethodVisitor {
         }
 
         switch (opc) {
+            case Opcodes.ACONST_NULL -> assembler.op(ACONST_NULL);
+
             case Opcodes.IADD -> assembler.op(I32_ADD);
             case Opcodes.ISUB -> assembler.op(I32_SUB);
             case Opcodes.IMUL -> assembler.op(I32_MUL);

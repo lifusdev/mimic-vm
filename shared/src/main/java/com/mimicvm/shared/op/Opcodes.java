@@ -70,6 +70,7 @@ public interface Opcodes {
     int NEW = 0x70;
     int GET_FIELD = 0x71;
     int PUT_FIELD = 0x72;
+    int ACONST_NULL = 0x73;
 
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;

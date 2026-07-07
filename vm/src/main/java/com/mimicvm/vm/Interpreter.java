@@ -409,6 +409,8 @@ public final class Interpreter implements Opcodes {
                         return null;
                     }
                 }
+                
+                case ACONST_NULL -> frame.stack().push(Value.NULL);
 
                 case NEW -> frame.stack().push(Value.ref(heap.alloc(cursor.nextU8())));
 

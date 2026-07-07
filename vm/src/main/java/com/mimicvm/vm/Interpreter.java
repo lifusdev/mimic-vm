@@ -345,6 +345,25 @@ public final class Interpreter implements Opcodes {
                     callStack.push(calleeFrame);
                 }
 
+                case SWITCH -> {
+                    final int dflt = cursor.nextI32();
+                    final int count = cursor.nextI32();
+                    final int key = frame.stack().pop().asI32();
+
+                    int target = dflt;
+
+                    for (int i = 0; i < count; i++) {
+                        final int matchKey = cursor.nextI32();
+                        final int matchTarget = cursor.nextI32();
+
+                        if (key == matchKey) {
+                            target = matchTarget;
+                        }
+                    }
+
+                    cursor.seek(target);
+                }
+
                 case JUMP -> cursor.seek(cursor.nextI32());
 
                 case JUMP_IF -> {

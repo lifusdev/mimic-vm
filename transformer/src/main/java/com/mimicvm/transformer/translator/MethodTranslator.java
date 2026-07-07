@@ -114,6 +114,13 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.IFGT -> assembler.op(I32_CONST).i32(0).op(I32_GT).op(JUMP_IF);
             case Opcodes.IFLE -> assembler.op(I32_CONST).i32(0).op(I32_LE).op(JUMP_IF);
 
+            // null ref is ref(0)
+            case Opcodes.IFNULL -> assembler.op(I32_CONST).i32(0).op(I32_EQ).op(JUMP_IF);
+            case Opcodes.IFNONNULL -> assembler.op(I32_CONST).i32(0).op(I32_NE).op(JUMP_IF);
+
+            case Opcodes.IF_ACMPEQ -> assembler.op(I32_EQ).op(JUMP_IF);
+            case Opcodes.IF_ACMPNE -> assembler.op(I32_NE).op(JUMP_IF);
+
             // not yet supported
             default -> {
                 return;
@@ -123,6 +130,42 @@ public final class MethodTranslator extends MethodVisitor {
         // placeholder (4 bytes)
         patches.add(new Patch(assembler.pos(), label));
         assembler.i32(0);
+    }
+
+    @Override
+    public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
+        assembler.op(SWITCH);
+
+        // placeholder for default
+        patches.add(new Patch(assembler.pos(), dflt));
+        assembler.i32(0);
+
+        assembler.i32(keys.length);
+
+        for (int i = 0; i < keys.length; i++) {
+            assembler.i32(keys[i]);
+
+            // placeholder for the jump target
+            patches.add(new Patch(assembler.pos(), labels[i]));
+            assembler.i32(0);
+        }
+    }
+
+    @Override
+    public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {
+        assembler.op(SWITCH);
+
+        patches.add(new Patch(assembler.pos(), dflt));
+        assembler.i32(0);
+
+        assembler.i32(labels.length);
+
+        for (int i = 0; i < labels.length; i++) {
+            assembler.i32(min + i);
+
+            patches.add(new Patch(assembler.pos(), labels[i]));
+            assembler.i32(0);
+        }
     }
 
     @Override

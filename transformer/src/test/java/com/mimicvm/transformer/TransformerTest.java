@@ -32,6 +32,20 @@ import static org.objectweb.asm.Opcodes.*;
 //    }
 //}
 
+//class Ts {
+//    static int ts() {
+//        int d = 2;
+//        switch (d) {
+//            case 1:
+//                return 6;
+//            case 2:
+//                return 7;
+//            default:
+//                return 5;
+//        }
+//    }
+//}
+
 class TransformerTest {
 
     @Test
@@ -127,5 +141,59 @@ class TransformerTest {
         final Value result = new Interpreter(module, 0).run();
 
         assertEquals(Value.i32(4950), result);
+    }
+
+    @Test
+    void translateTableSwitch() {
+        ClassWriter classWriter = new ClassWriter(0);
+        MethodVisitor methodVisitor;
+
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Ts", null, "java/lang/Object", null);
+
+//        {
+//            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
+//            methodVisitor.visitCode();
+//            methodVisitor.visitVarInsn(ALOAD, 0);
+//            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+//            methodVisitor.visitInsn(RETURN);
+//            methodVisitor.visitMaxs(1, 1);
+//            methodVisitor.visitEnd();
+//        }
+        {
+            methodVisitor = classWriter.visitMethod(ACC_STATIC, "ts", "()I", null, null);
+            methodVisitor.visitCode();
+            methodVisitor.visitInsn(ICONST_2);
+            methodVisitor.visitVarInsn(ISTORE, 0);
+            methodVisitor.visitVarInsn(ILOAD, 0);
+            Label label0 = new Label();
+            Label label1 = new Label();
+            Label label2 = new Label();
+            methodVisitor.visitLookupSwitchInsn(label2, new int[]{1, 2}, new Label[]{label0, label1});
+            methodVisitor.visitLabel(label0);
+            methodVisitor.visitFrame(Opcodes.F_APPEND, 1, new Object[]{Opcodes.INTEGER}, 0, null);
+            methodVisitor.visitIntInsn(BIPUSH, 6);
+            methodVisitor.visitInsn(IRETURN);
+            methodVisitor.visitLabel(label1);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            methodVisitor.visitIntInsn(BIPUSH, 7);
+            methodVisitor.visitInsn(IRETURN);
+            methodVisitor.visitLabel(label2);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            methodVisitor.visitInsn(ICONST_5);
+            methodVisitor.visitInsn(IRETURN);
+            methodVisitor.visitMaxs(1, 1);
+            methodVisitor.visitEnd();
+        }
+        classWriter.visitEnd();
+
+        final byte[] bytes = classWriter.toByteArray();
+
+        final List<VMethod> methods = new Transformer(bytes).translate();
+
+        final VModule module = new VModule(methods.toArray(new VMethod[0]));
+
+        final Value result = new Interpreter(module, 0).run();
+
+        assertEquals(Value.i32(7), result);
     }
 }

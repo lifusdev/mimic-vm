@@ -76,6 +76,8 @@ public interface Opcodes {
     int ARRAY_SET = 0x76;
     int ARRAY_LEN = 0x77;
 
+    int SWITCH = 0x78;
+
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;
     int I64_MUL = 0x16;

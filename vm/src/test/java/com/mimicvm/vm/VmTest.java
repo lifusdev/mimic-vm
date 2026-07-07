@@ -1,7 +1,7 @@
 package com.mimicvm.vm;
 
-import com.mimicvm.shared.method.VMethod;
-import com.mimicvm.shared.method.VModule;
+import com.mimicvm.shared.code.VMethod;
+import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.op.Opcodes;
 import com.mimicvm.shared.type.Value;
 import org.junit.jupiter.api.Test;

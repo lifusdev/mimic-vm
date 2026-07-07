@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator;
+package com.mimicvm.transformer.translator.table;
 
 /**
  * resolves a method to its call index.

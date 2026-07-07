@@ -1,11 +1,12 @@
 package com.mimicvm.vm;
 
-import com.mimicvm.shared.method.VMethod;
-import com.mimicvm.shared.method.VModule;
+import com.mimicvm.shared.code.VMethod;
+import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.op.Opcodes;
 import com.mimicvm.shared.type.Value;
 import com.mimicvm.vm.frame.Cursor;
 import com.mimicvm.vm.frame.Frame;
+import com.mimicvm.vm.heap.Heap;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -15,6 +16,7 @@ public final class Interpreter implements Opcodes {
     private final VModule module;
 
     private final Deque<Frame> callStack = new ArrayDeque<>();
+    private final Heap heap = new Heap();
 
     public Interpreter(VModule module, int methodIdx) {
         this(module, methodIdx, new Value[0]);
@@ -406,6 +408,21 @@ public final class Interpreter implements Opcodes {
                     if (callStack.isEmpty()) {
                         return null;
                     }
+                }
+
+                case NEW -> frame.stack().push(Value.ref(heap.alloc(cursor.nextU8())));
+
+                case GET_FIELD -> {
+                    final int idx = cursor.nextU8();
+                    final int ref = frame.stack().pop().refId();
+                    frame.stack().push(heap.get(ref).field(idx));
+                }
+
+                case PUT_FIELD -> {
+                    final int idx = cursor.nextU8();
+                    final Value value = frame.stack().pop();
+                    final int ref = frame.stack().pop().refId();
+                    heap.get(ref).field(idx, value);
                 }
 
                 default -> throw new IllegalStateException("unknown opc: " + opc);

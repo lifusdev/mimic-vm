@@ -1,4 +1,4 @@
-package com.mimicvm.shared.method;
+package com.mimicvm.shared.code;
 
 /**
  * A virtualized method.

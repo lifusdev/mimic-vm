@@ -1,6 +1,6 @@
 package com.mimicvm.vm.frame;
 
-import com.mimicvm.shared.method.VMethod;
+import com.mimicvm.shared.code.VMethod;
 
 public final class Frame {
 

@@ -67,6 +67,10 @@ public interface Opcodes {
     int F32_REM = 0x6D;
     int F64_REM = 0x6E;
 
+    int NEW = 0x70;
+    int GET_FIELD = 0x71;
+    int PUT_FIELD = 0x72;
+
     int I64_ADD = 0x14;
     int I64_SUB = 0x15;
     int I64_MUL = 0x16;

@@ -1,9 +1,11 @@
 package com.mimicvm.transformer.translator;
 
-import com.mimicvm.shared.method.VMethod;
+import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.utils.ByteUtils;
 import com.mimicvm.shared.utils.DescUtils;
 import com.mimicvm.transformer.emit.Assembler;
+import com.mimicvm.transformer.translator.table.IFieldIdx;
+import com.mimicvm.transformer.translator.table.IMethodIdx;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -20,6 +22,7 @@ public final class MethodTranslator extends MethodVisitor {
 
     private final Assembler assembler = new Assembler();
     private final IMethodIdx table;
+    private final IFieldIdx fields;
     private final Consumer<VMethod> onDone;
 
     private final int paramCount;
@@ -35,9 +38,10 @@ public final class MethodTranslator extends MethodVisitor {
 
     private final List<Patch> patches = new ArrayList<>();
 
-    public MethodTranslator(IMethodIdx table, int access, String desc, Consumer<VMethod> onDone) {
+    public MethodTranslator(IMethodIdx table, IFieldIdx fields, int access, String desc, Consumer<VMethod> onDone) {
         super(Opcodes.ASM9);
         this.table = table;
+        this.fields = fields;
         this.onDone = onDone;
 
         final boolean isStatic = (access & Opcodes.ACC_STATIC) != 0;
@@ -59,6 +63,22 @@ public final class MethodTranslator extends MethodVisitor {
             if (idx >= 0) {
                 assembler.op(CALL).u8(idx);
             }
+        }
+    }
+
+    @Override
+    public void visitTypeInsn(int opc, String type) {
+        // NEW with field count
+        if (opc == Opcodes.NEW) {
+            assembler.op(NEW).u8(fields.fieldCount());
+        }
+    }
+
+    @Override
+    public void visitFieldInsn(int opc, String owner, String name, String desc) {
+        switch (opc) {
+            case Opcodes.GETFIELD -> assembler.op(GET_FIELD).u8(fields.indexOf(name, desc));
+            case Opcodes.PUTFIELD -> assembler.op(PUT_FIELD).u8(fields.indexOf(name, desc));
         }
     }
 

@@ -58,10 +58,9 @@ public final class MethodTranslator extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-        if (opcode == Opcodes.INVOKESTATIC || opcode == Opcodes.INVOKESPECIAL) {
+        if (opcode == Opcodes.INVOKESTATIC || opcode == Opcodes.INVOKESPECIAL || opcode == Opcodes.INVOKEVIRTUAL) {
             final int idx = table.indexOf(name, descriptor);
 
-            // not yet supported
             if (idx >= 0) {
                 assembler.op(CALL).u8(idx);
             }
@@ -291,7 +290,8 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.POP -> assembler.op(POP);
             case Opcodes.SWAP -> assembler.op(SWAP);
 
-            case Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN -> assembler.op(RETURN);
+            case Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN, Opcodes.ARETURN ->
+                    assembler.op(RETURN);
             case Opcodes.RETURN -> assembler.op(RETURN_VOID);
         }
     }

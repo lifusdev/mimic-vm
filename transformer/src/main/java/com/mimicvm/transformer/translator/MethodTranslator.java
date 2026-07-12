@@ -6,6 +6,7 @@ import com.mimicvm.shared.utils.DescUtils;
 import com.mimicvm.transformer.emit.Assembler;
 import com.mimicvm.transformer.translator.table.IFieldIdx;
 import com.mimicvm.transformer.translator.table.IMethodIdx;
+import com.mimicvm.transformer.translator.table.ITypeIdx;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -24,6 +25,7 @@ public final class MethodTranslator extends MethodVisitor {
     private final IMethodIdx table;
     private final IFieldIdx fields;
     private final IFieldIdx statics;
+    private final ITypeIdx types;
     private final Consumer<VMethod> onDone;
 
     private final int paramCount;
@@ -39,11 +41,12 @@ public final class MethodTranslator extends MethodVisitor {
 
     private final List<Patch> patches = new ArrayList<>();
 
-    public MethodTranslator(IMethodIdx table, IFieldIdx fields, IFieldIdx statics, int access, String desc, Consumer<VMethod> onDone) {
+    public MethodTranslator(IMethodIdx table, IFieldIdx fields, IFieldIdx statics, ITypeIdx types, int access, String desc, Consumer<VMethod> onDone) {
         super(Opcodes.ASM9);
         this.table = table;
         this.fields = fields;
         this.statics = statics;
+        this.types = types;
         this.onDone = onDone;
 
         final boolean isStatic = (access & Opcodes.ACC_STATIC) != 0;
@@ -69,13 +72,20 @@ public final class MethodTranslator extends MethodVisitor {
 
     @Override
     public void visitTypeInsn(int opcode, String type) {
-        // NEW with field count
         if (opcode == Opcodes.NEW) {
-            assembler.op(NEW).u8(fields.fieldCount());
+            assembler.op(NEW).u8(fields.fieldCount()).u8(types.indexOf(type));
         }
-        
+
         if (opcode == Opcodes.ANEWARRAY) {
-            assembler.op(NEW_ARRAY);
+            assembler.op(NEW_ARRAY).u8(types.indexOf(type));
+        }
+
+        if (opcode == Opcodes.CHECKCAST) {
+
+        }
+
+        if (opcode == Opcodes.INSTANCEOF) {
+            assembler.op(INSTANCEOF).u8(types.indexOf(type));
         }
     }
 
@@ -326,7 +336,7 @@ public final class MethodTranslator extends MethodVisitor {
 
         //TODO
         if (opcode == Opcodes.NEWARRAY) {
-            assembler.op(NEW_ARRAY);
+            assembler.op(NEW_ARRAY).u8(0xFF);
         }
     }
 

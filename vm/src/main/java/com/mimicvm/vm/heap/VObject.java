@@ -8,9 +8,15 @@ import com.mimicvm.shared.type.Value;
 public final class VObject {
 
     private final Value[] fields;
+    private final int typeIdx;
 
     public VObject(int fieldCount) {
+        this(fieldCount, -1);
+    }
+
+    public VObject(int fieldCount, int typeIdx) {
         this.fields = new Value[fieldCount];
+        this.typeIdx = typeIdx;
     }
 
     // read field
@@ -25,5 +31,9 @@ public final class VObject {
 
     public int len() {
         return fields.length;
+    }
+
+    public int typeIdx() {
+        return typeIdx;
     }
 }

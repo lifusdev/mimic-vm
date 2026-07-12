@@ -435,11 +435,20 @@ public final class Interpreter implements Opcodes {
 
                 case ACONST_NULL -> frame.stack().push(Value.NULL);
 
-                case NEW -> frame.stack().push(Value.ref(heap.alloc(cursor.nextU8())));
+                case NEW -> {
+                    final int fieldCount = cursor.nextU8();
+                    final int typeIdx = cursor.nextU8();
+                    frame.stack().push(Value.ref(heap.alloc(fieldCount, typeIdx)));
+                }
 
                 case NEW_ARRAY -> {
+                    final int typeIdx = cursor.nextU8();
                     final int len = frame.stack().pop().asI32();
-                    frame.stack().push(Value.ref(heap.alloc(len)));
+                    if (typeIdx == 0xFF) {
+                        frame.stack().push(Value.ref(heap.alloc(len))); //untyped
+                    } else {
+                        frame.stack().push(Value.ref(heap.alloc(len, typeIdx)));
+                    }
                 }
 
                 case ARRAY_GET -> {
@@ -475,6 +484,12 @@ public final class Interpreter implements Opcodes {
                     final Value value = frame.stack().pop();
                     final int ref = frame.stack().pop().refId();
                     heap.get(ref).field(idx, value);
+                }
+
+                case INSTANCEOF -> {
+                    final int typeIdx = cursor.nextU8();
+                    final int ref = frame.stack().pop().refId();
+                    frame.stack().push(Value.i32(heap.get(ref).typeIdx() == typeIdx ? 1 : 0));
                 }
 
                 default -> throw new IllegalStateException("unknown opc: " + opc);

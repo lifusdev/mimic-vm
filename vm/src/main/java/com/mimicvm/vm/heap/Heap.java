@@ -20,6 +20,11 @@ public final class Heap {
         return objects.size() - 1;
     }
 
+    public int alloc(int fieldCount, int typeIdx) {
+        objects.add(new VObject(fieldCount, typeIdx));
+        return objects.size() - 1;
+    }
+
     public VObject get(int id) {
         if (id == 0) {
             throw new NullPointerException("null reference");

@@ -1,14 +1,12 @@
 package com.mimicvm.transformer;
 
+import com.mimicvm.annotations.VirtualizeMe;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.type.Value;
 import com.mimicvm.vm.Interpreter;
 import org.junit.jupiter.api.Test;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.*;
 
 import java.util.List;
 
@@ -66,6 +64,7 @@ class TransformerTest {
 //        }
         {
             methodVisitor = classWriter.visitMethod(ACC_STATIC, "three", "()I", null, null);
+            methodVisitor.visitAnnotation(Type.getDescriptor(VirtualizeMe.class), false).visitEnd();
             methodVisitor.visitCode();
             methodVisitor.visitInsn(ICONST_3);
             methodVisitor.visitInsn(IRETURN);
@@ -105,6 +104,7 @@ class TransformerTest {
 //        }
         {
             methodVisitor = classWriter.visitMethod(0, "idk", "()I", null, null);
+            methodVisitor.visitAnnotation(Type.getDescriptor(VirtualizeMe.class), false).visitEnd();
             methodVisitor.visitCode();
             methodVisitor.visitInsn(ICONST_0);
             methodVisitor.visitVarInsn(ISTORE, 1);
@@ -161,6 +161,7 @@ class TransformerTest {
 //        }
         {
             methodVisitor = classWriter.visitMethod(ACC_STATIC, "ts", "()I", null, null);
+            methodVisitor.visitAnnotation(Type.getDescriptor(VirtualizeMe.class), false).visitEnd();
             methodVisitor.visitCode();
             methodVisitor.visitInsn(ICONST_2);
             methodVisitor.visitVarInsn(ISTORE, 0);

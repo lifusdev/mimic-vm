@@ -44,7 +44,62 @@ import static org.objectweb.asm.Opcodes.*;
 //    }
 //}
 
+//class IntArray {
+//
+//    @VirtualizeMe
+//    public int test() {
+//        Object arr = new int[5];
+//        return ((int[]) arr).length;
+//    }
+//}
+
+
 class TransformerTest {
+
+    @Test
+    void checkcastTest() {
+        ClassWriter classWriter = new ClassWriter(0);
+        MethodVisitor methodVisitor;
+        AnnotationVisitor annotationVisitor0;
+
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/IntArray", null, "java/lang/Object", null);
+
+        {
+            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
+            methodVisitor.visitCode();
+            methodVisitor.visitVarInsn(ALOAD, 0);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+            methodVisitor.visitInsn(RETURN);
+            methodVisitor.visitMaxs(1, 1);
+            methodVisitor.visitEnd();
+        }
+        {
+            methodVisitor = classWriter.visitMethod(ACC_PUBLIC, "test", "()I", null, null);
+            {
+                annotationVisitor0 = methodVisitor.visitAnnotation("Lcom/mimicvm/annotations/VirtualizeMe;", false);
+                annotationVisitor0.visitEnd();
+            }
+            methodVisitor.visitCode();
+            methodVisitor.visitInsn(ICONST_5);
+            methodVisitor.visitIntInsn(NEWARRAY, T_INT);
+            methodVisitor.visitVarInsn(ASTORE, 1);
+            methodVisitor.visitVarInsn(ALOAD, 1);
+            methodVisitor.visitTypeInsn(CHECKCAST, "[I");
+            methodVisitor.visitInsn(ARRAYLENGTH);
+            methodVisitor.visitInsn(IRETURN);
+            methodVisitor.visitMaxs(1, 2);
+            methodVisitor.visitEnd();
+        }
+        classWriter.visitEnd();
+
+        Transformer transformer = new Transformer(classWriter.toByteArray());
+        List<VMethod> methods = transformer.translate();
+        VModule module = new VModule(transformer.typeNames(), methods.toArray(new VMethod[0]));
+
+        Value result = new Interpreter(module, 0).run();
+
+        assertEquals(Value.i32(5), result);
+    }
 
     @Test
     void translate1() {

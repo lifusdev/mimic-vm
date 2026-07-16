@@ -84,7 +84,7 @@ public final class MethodTranslator extends MethodVisitor {
         }
 
         if (opcode == Opcodes.CHECKCAST) {
-
+            assembler.op(CHECKCAST).u8(types.indexOf(type));
         }
 
         if (opcode == Opcodes.INSTANCEOF) {

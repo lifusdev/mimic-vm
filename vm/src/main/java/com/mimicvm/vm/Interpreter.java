@@ -506,6 +506,18 @@ public final class Interpreter implements Opcodes {
                     frame.stack().push(Value.i32(heap.get(ref).typeIdx() == typeIdx ? 1 : 0));
                 }
 
+                case CHECKCAST -> {
+                    final int typeIdx = cursor.nextU8();
+                    final Value value = frame.stack().pop();
+                    final int ref = value.refId();
+
+                    if (ref != 0 && heap.get(ref).typeIdx() != typeIdx) {
+                        throw new ClassCastException("Cannot cast type " + heap.get(ref).typeIdx() + " to " + typeIdx);
+                    }
+
+                    frame.stack().push(value);
+                }
+
                 default -> throw new IllegalStateException("unknown opc: " + opc);
             }
         }

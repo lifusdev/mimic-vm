@@ -33,6 +33,11 @@ public final class Interpreter implements Opcodes {
     public Interpreter(VModule module, int methodIdx, Value... args) {
         this.module = module;
 
+        //before the first method call
+        for (int i = 0; i < module.staticTypes().length; i++) {
+            statics.put(i, module.staticTypes()[i].defaultValue());
+        }
+
         final Frame entry = new Frame(module.method(methodIdx));
 
         for (int i = 0; i < args.length; i++) {
@@ -556,7 +561,9 @@ public final class Interpreter implements Opcodes {
                 case NEW -> {
                     final int fieldCount = cursor.nextU8();
                     final int typeIdx = cursor.nextU8();
-                    frame.stack().push(Value.ref(heap.alloc(fieldCount, typeIdx)));
+                    
+                    final int ref = module.fieldTypes().length == fieldCount ? heap.alloc(fieldCount, typeIdx, module.fieldTypes()) : heap.alloc(fieldCount, typeIdx);
+                    frame.stack().push(Value.ref(ref));
                 }
 
                 case NEW_ARRAY -> {

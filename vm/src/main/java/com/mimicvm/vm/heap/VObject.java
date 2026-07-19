@@ -1,5 +1,6 @@
 package com.mimicvm.vm.heap;
 
+import com.mimicvm.shared.type.Type;
 import com.mimicvm.shared.type.Value;
 
 import java.util.Arrays;
@@ -25,6 +26,19 @@ public final class VObject {
         this(fieldCount, typeIdx);
 
         Arrays.fill(fields, initVal);
+    }
+
+    public VObject(int fieldCount, int typeIdx, Type[] fieldTypes) {
+        this(fieldCount, typeIdx);
+
+        if (fieldTypes.length != fieldCount) {
+            throw new IllegalArgumentException("field type count does not match");
+        }
+
+        
+        for (int i = 0; i < fieldCount; i++) {
+            fields[i] = fieldTypes[i].defaultValue();
+        }
     }
 
     // read field

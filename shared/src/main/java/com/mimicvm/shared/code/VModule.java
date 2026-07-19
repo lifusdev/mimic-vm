@@ -1,10 +1,15 @@
 package com.mimicvm.shared.code;
 
+import com.mimicvm.shared.type.Type;
+
 /**
- * @param typeNames all type names referenced in the module
- * @param constants constant pool
+ * @param typeNames   all type names referenced in the module
+ * @param constants   constant pool
+ * @param fieldTypes  types of instance field slots
+ * @param staticTypes types of static field slots
  */
-public record VModule(String[] typeNames, String[] constants, VMethod[] methods) {
+public record VModule(String[] typeNames, String[] constants, Type[] fieldTypes, Type[] staticTypes,
+                      VMethod[] methods) {
 
     public VModule {
         if (methods == null) {
@@ -16,6 +21,16 @@ public record VModule(String[] typeNames, String[] constants, VMethod[] methods)
         if (constants == null) {
             constants = new String[0];
         }
+        if (fieldTypes == null) {
+            fieldTypes = new Type[0];
+        }
+        if (staticTypes == null) {
+            staticTypes = new Type[0];
+        }
+    }
+
+    public VModule(String[] typeNames, String[] constants, VMethod[] methods) {
+        this(typeNames, constants, new Type[0], new Type[0], methods);
     }
 
     public VModule(String[] typeNames, VMethod[] methods) {

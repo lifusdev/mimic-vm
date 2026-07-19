@@ -48,4 +48,20 @@ public final class DescUtils {
             default -> throw new IllegalArgumentException("bad array descriptor: " + desc);
         };
     }
+
+    public static Type valueType(String desc) {
+        if (desc == null || desc.isEmpty()) {
+            throw new IllegalArgumentException("bad value descriptor: " + desc);
+        }
+
+        return switch (desc.charAt(0)) {
+            case 'Z', 'B', 'C', 'S', 'I' -> Type.I32;
+            case 'J' -> Type.I64;
+            case 'F' -> Type.F32;
+            case 'D' -> Type.F64;
+            case 'L', '[' -> Type.REF;
+            case 'V' -> Type.VOID;
+            default -> throw new IllegalArgumentException("bad value descriptor: " + desc);
+        };
+    }
 }

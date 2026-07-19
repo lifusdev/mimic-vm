@@ -308,6 +308,7 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.DUP -> assembler.op(DUP);
             case Opcodes.DUP_X1 -> assembler.op(DUP_X1);
             case Opcodes.DUP2 -> assembler.op(DUP2);
+            case Opcodes.DUP_X2 -> assembler.op(DUP_X2);
             case Opcodes.POP -> assembler.op(POP);
             case Opcodes.SWAP -> assembler.op(SWAP);
 

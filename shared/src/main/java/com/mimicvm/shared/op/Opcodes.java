@@ -30,6 +30,7 @@ public interface Opcodes {
     int SWAP = 0x42;
     int DUP_X1 = 0x43;
     int DUP2 = 0x44;
+    int DUP_X2 = 0x45;
 
     int I2L = 0x50;
     int I2F = 0x51;

@@ -275,8 +275,10 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.FREM -> assembler.op(F32_REM);
             case Opcodes.DREM -> assembler.op(F64_REM);
             case Opcodes.LCMP -> assembler.op(I64_CMP);
-            case Opcodes.FCMPL, Opcodes.FCMPG -> assembler.op(F32_CMP);
-            case Opcodes.DCMPL, Opcodes.DCMPG -> assembler.op(F64_CMP);
+            case Opcodes.FCMPL -> assembler.op(F32_CMPL);
+            case Opcodes.FCMPG -> assembler.op(F32_CMPG);
+            case Opcodes.DCMPL -> assembler.op(F64_CMPL);
+            case Opcodes.DCMPG -> assembler.op(F64_CMPG);
 
             case Opcodes.I2L -> assembler.op(I2L);
             case Opcodes.I2F -> assembler.op(I2F);
@@ -312,6 +314,7 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.DUP2_X1 -> assembler.op(DUP2_X1);
             case Opcodes.DUP2_X2 -> assembler.op(DUP2_X2);
             case Opcodes.POP -> assembler.op(POP);
+            case Opcodes.POP2 -> assembler.op(POP2);
             case Opcodes.SWAP -> assembler.op(SWAP);
 
             case Opcodes.IRETURN, Opcodes.LRETURN, Opcodes.FRETURN, Opcodes.DRETURN, Opcodes.ARETURN ->

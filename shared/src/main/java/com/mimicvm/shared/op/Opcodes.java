@@ -33,6 +33,7 @@ public interface Opcodes {
     int DUP_X2 = 0x45;
     int DUP2_X1 = 0x46;
     int DUP2_X2 = 0x47;
+    int POP2 = 0x48;
 
     int I2L = 0x50;
     int I2F = 0x51;
@@ -55,8 +56,10 @@ public interface Opcodes {
     int I2S = 0x5E;
 
     int I64_CMP = 0x60;
-    int F32_CMP = 0x61;
-    int F64_CMP = 0x62;
+    int F32_CMPL = 0x61;
+    int F64_CMPL = 0x62;
+    int F32_CMPG = 0x49;
+    int F64_CMPG = 0x4A;
 
     int I64_NEG = 0x63;
     int I64_REM = 0x64;

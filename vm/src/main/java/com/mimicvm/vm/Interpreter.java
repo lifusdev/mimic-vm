@@ -7,6 +7,7 @@ import com.mimicvm.shared.type.Value;
 import com.mimicvm.vm.frame.Cursor;
 import com.mimicvm.vm.frame.Frame;
 import com.mimicvm.vm.heap.Heap;
+import com.mimicvm.vm.utils.Utils;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -243,6 +244,14 @@ public final class Interpreter implements Opcodes {
 
                 case POP -> frame.stack().pop();
 
+                case POP2 -> {
+                    final Value top = frame.stack().pop();
+
+                    if (!top.type().isWide()) {
+                        frame.stack().pop();
+                    }
+                }
+
                 case SWAP -> {
                     final Value a = frame.stack().pop();
                     final Value b = frame.stack().pop();
@@ -276,16 +285,18 @@ public final class Interpreter implements Opcodes {
                     frame.stack().push(Value.i32(Long.compare(a, b)));
                 }
 
-                case F32_CMP -> {
+                case F32_CMPL, F32_CMPG -> {
                     final float b = frame.stack().pop().asF32();
                     final float a = frame.stack().pop().asF32();
-                    frame.stack().push(Value.i32(Float.compare(a, b)));
+                    final int nan = opc == F32_CMPL ? -1 : 1;
+                    frame.stack().push(Value.i32(Utils.cmp(a, b, nan)));
                 }
 
-                case F64_CMP -> {
+                case F64_CMPL, F64_CMPG -> {
                     final double b = frame.stack().pop().asF64();
                     final double a = frame.stack().pop().asF64();
-                    frame.stack().push(Value.i32(Double.compare(a, b)));
+                    final int nan = opc == F64_CMPL ? -1 : 1;
+                    frame.stack().push(Value.i32(Utils.cmp(a, b, nan)));
                 }
 
                 case I64_ADD -> {
@@ -616,4 +627,5 @@ public final class Interpreter implements Opcodes {
 
         throw new IllegalStateException("missing RETURN");
     }
+
 }

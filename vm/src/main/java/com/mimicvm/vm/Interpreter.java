@@ -209,6 +209,38 @@ public final class Interpreter implements Opcodes {
                     frame.stack().push(top);
                 }
 
+                case DUP2_X2 -> {
+                    final Value top = frame.stack().pop();
+                    final Value below = frame.stack().pop();
+
+                    if (top.type().isWide()) {
+                        if (below.type().isWide()) {
+                            frame.stack().push(top);
+                        } else {
+                            final Value bottom = frame.stack().pop();
+                            frame.stack().push(top);
+                            frame.stack().push(bottom);
+                        }
+
+                    } else {
+                        final Value bottom = frame.stack().pop();
+
+                        if (bottom.type().isWide()) {
+                            frame.stack().push(below);
+                            frame.stack().push(top);
+                        } else {
+                            final Value fourth = frame.stack().pop();
+                            frame.stack().push(below);
+                            frame.stack().push(top);
+                            frame.stack().push(fourth);
+                        }
+
+                        frame.stack().push(bottom);
+                    }
+                    frame.stack().push(below);
+                    frame.stack().push(top);
+                }
+
                 case POP -> frame.stack().pop();
 
                 case SWAP -> {

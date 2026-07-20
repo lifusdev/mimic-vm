@@ -113,6 +113,7 @@ public interface Opcodes {
     int RETURN_VOID = 0x21;
 
     int CALL = 0x22;
+    int CALL_STATIC = 0x23;
 
     int JUMP = 0x30;
     int I32_EQ = 0x31;

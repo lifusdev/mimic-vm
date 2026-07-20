@@ -1,13 +1,11 @@
 package com.mimicvm.transformer.translator;
 
+import com.mimicvm.shared.call.StaticCall;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.utils.ByteUtils;
 import com.mimicvm.shared.utils.DescUtils;
 import com.mimicvm.transformer.emit.Assembler;
-import com.mimicvm.transformer.translator.table.ConstantPool;
-import com.mimicvm.transformer.translator.table.IFieldIdx;
-import com.mimicvm.transformer.translator.table.IMethodIdx;
-import com.mimicvm.transformer.translator.table.ITypeIdx;
+import com.mimicvm.transformer.translator.table.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -27,6 +25,7 @@ public final class MethodTranslator extends MethodVisitor {
     private final IMethodIdx table;
     private final IFieldIdx fields;
     private final IFieldIdx statics;
+    private final ICallIdx calls;
     private final ITypeIdx types;
     private final ConstantPool strings;
     private final Consumer<VMethod> onDone;
@@ -44,11 +43,12 @@ public final class MethodTranslator extends MethodVisitor {
 
     private final List<Patch> patches = new ArrayList<>();
 
-    public MethodTranslator(IMethodIdx table, IFieldIdx fields, IFieldIdx statics, ITypeIdx types, ConstantPool strings, int access, String desc, Consumer<VMethod> onDone) {
+    public MethodTranslator(IMethodIdx table, IFieldIdx fields, IFieldIdx statics, ICallIdx calls, ITypeIdx types, ConstantPool strings, int access, String desc, Consumer<VMethod> onDone) {
         super(Opcodes.ASM9);
         this.table = table;
         this.fields = fields;
         this.statics = statics;
+        this.calls = calls;
         this.types = types;
         this.strings = strings;
         this.onDone = onDone;
@@ -70,6 +70,13 @@ public final class MethodTranslator extends MethodVisitor {
 
             if (idx >= 0) {
                 assembler.op(CALL).u8(idx);
+                return;
+            }
+
+            // shared pool
+            if (opcode == Opcodes.INVOKESTATIC) {
+                final int callIdx = calls.indexOf(new StaticCall(owner, name, descriptor));
+                assembler.op(CALL_STATIC).u8(callIdx);
             }
         }
     }

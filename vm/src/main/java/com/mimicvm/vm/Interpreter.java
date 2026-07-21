@@ -12,6 +12,7 @@ import com.mimicvm.vm.call.ReflectCallInvoker;
 import com.mimicvm.vm.frame.Cursor;
 import com.mimicvm.vm.frame.Frame;
 import com.mimicvm.vm.heap.Heap;
+import com.mimicvm.vm.heap.HostObjects;
 import com.mimicvm.vm.utils.Utils;
 
 import java.util.*;
@@ -23,9 +24,9 @@ public final class Interpreter implements Opcodes {
 
     private final Deque<Frame> callStack = new ArrayDeque<>();
     private final Heap heap = new Heap();
+    private final HostObjects hostObjects = new HostObjects();
 
     private final Map<Integer, Value> statics = new HashMap<>();
-    private final Map<Integer, String> stringObjs = new HashMap<>();
 
     public Interpreter(VModule module, int methodIdx) {
         this(module, methodIdx, new ReflectCallInvoker());
@@ -576,7 +577,8 @@ public final class Interpreter implements Opcodes {
                     final int poolIdx = cursor.nextU8();
                     final String str = module.constant(poolIdx);
                     final int ref = heap.alloc(0); // string has 0 instance fields
-                    stringObjs.put(ref, str);
+                    
+                    hostObjects.put(ref, str);
                     frame.stack().push(Value.ref(ref));
                 }
 

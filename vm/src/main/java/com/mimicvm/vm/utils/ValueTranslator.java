@@ -33,6 +33,11 @@ public final class ValueTranslator {
             return value.asF64();
         }
 
+        
+        if (value.equals(Value.NULL)) {
+            return null;
+        }
+
         // TODO
         throw new UnsupportedOperationException("not supported yet: " + type.getName());
     }
@@ -58,6 +63,10 @@ public final class ValueTranslator {
         }
         if (type == double.class) {
             return Value.f64((double) value);
+        }
+
+        if (value == null) {
+            return Value.NULL;
         }
 
         // TODO

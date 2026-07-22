@@ -95,6 +95,12 @@ public final class ValueTranslator {
         }
 
         if (!type.isPrimitive()) {
+            // A known java instance retains its vm ref
+            final int known = hObjects.refOf(value);
+            if (known != 0) {
+                return Value.ref(known);
+            }
+
             // new VM ref
             final int ref = heap.alloc(0);
             hObjects.put(ref, value);

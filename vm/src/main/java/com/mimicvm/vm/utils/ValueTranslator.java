@@ -1,6 +1,7 @@
 package com.mimicvm.vm.utils;
 
 import com.mimicvm.shared.type.Value;
+import com.mimicvm.vm.heap.Heap;
 import com.mimicvm.vm.heap.HostObjects;
 
 import java.util.Objects;
@@ -10,13 +11,19 @@ import java.util.Objects;
  */
 public final class ValueTranslator {
 
+    private final Heap heap;
     private final HostObjects hObjects;
 
     public ValueTranslator() {
-        this(new HostObjects());
+        this(new Heap(), new HostObjects());
     }
 
     public ValueTranslator(HostObjects hObjects) {
+        this(new Heap(), hObjects);
+    }
+
+    public ValueTranslator(Heap heap, HostObjects hObjects) {
+        this.heap = Objects.requireNonNull(heap, "heap must not be null");
         this.hObjects = Objects.requireNonNull(hObjects, "objects must not be null");
     }
 
@@ -85,6 +92,13 @@ public final class ValueTranslator {
 
         if (value == null) {
             return Value.NULL;
+        }
+
+        if (!type.isPrimitive()) {
+            // new VM ref
+            final int ref = heap.alloc(0);
+            hObjects.put(ref, value);
+            return Value.ref(ref);
         }
 
         // TODO

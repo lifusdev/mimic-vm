@@ -23,31 +23,32 @@ public final class Interpreter implements Opcodes {
     private final ICallInvoker callInvoker;
 
     private final Deque<Frame> callStack = new ArrayDeque<>();
-    private final Heap heap = new Heap();
+    private final Heap heap;
     private final HostObjects hostObjects;
 
     private final Map<Integer, Value> statics = new HashMap<>();
 
     public Interpreter(VModule module, int methodIdx) {
-        this(module, methodIdx, new HostObjects());
+        this(module, methodIdx, new Heap(), new HostObjects());
     }
 
     public Interpreter(VModule module, int methodIdx, Value... args) {
-        this(module, methodIdx, new HostObjects(), args);
+        this(module, methodIdx, new Heap(), new HostObjects(), args);
     }
 
-    private Interpreter(VModule module, int methodIdx, HostObjects hostObjects, Value... args) {
+    private Interpreter(VModule module, int methodIdx, Heap heap, HostObjects hostObjects, Value... args) {
         // Interpreter and java calls share their objs
-        this(module, methodIdx, new ReflectCallInvoker(hostObjects), hostObjects, args);
+        this(module, methodIdx, new ReflectCallInvoker(heap, hostObjects), heap, hostObjects, args);
     }
 
     public Interpreter(VModule module, int methodIdx, ICallInvoker callInvoker, Value... args) {
-        this(module, methodIdx, callInvoker, new HostObjects(), args);
+        this(module, methodIdx, callInvoker, new Heap(), new HostObjects(), args);
     }
 
-    private Interpreter(VModule module, int methodIdx, ICallInvoker callInvoker, HostObjects hostObjects, Value... args) {
+    private Interpreter(VModule module, int methodIdx, ICallInvoker callInvoker, Heap heap, HostObjects hostObjects, Value... args) {
         this.module = module;
         this.callInvoker = Objects.requireNonNull(callInvoker, "callInvoker must not be null");
+        this.heap = Objects.requireNonNull(heap, "heap must not be null");
         this.hostObjects = Objects.requireNonNull(hostObjects, "hostObjects must not be null");
 
         //before the first method call

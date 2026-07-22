@@ -37,6 +37,23 @@ class VmTest implements Opcodes {
     }
 
     @Test
+    void javaCallReturnsObj() {
+        final byte[] insns = {
+                (byte) I32_CONST, 0x0, 0x0, 0x0, 0x33, // dec:51
+                (byte) CALL_STATIC, 0x0, // to string
+                (byte) CALL_STATIC, 0x1, // to int
+                (byte) RETURN
+        };
+
+        final VModule module = new VModule(new String[0], new String[0], new Type[0], new Type[0], new StaticCall[]{
+                new StaticCall("java/lang/String", "valueOf", "(I)Ljava/lang/String;"),
+                new StaticCall("java/lang/Integer", "parseInt", "(Ljava/lang/String;)I")
+        }, new VMethod[]{new VMethod(0, 1, 0, insns)});
+
+        assertEquals(Value.i32(51), new Interpreter(module, 0).run());
+    }
+
+    @Test
     void test1() {
 
         final byte[] insns = {

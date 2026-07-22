@@ -2,6 +2,7 @@ package com.mimicvm.vm.call;
 
 import com.mimicvm.shared.call.StaticCall;
 import com.mimicvm.shared.type.Value;
+import com.mimicvm.vm.heap.Heap;
 import com.mimicvm.vm.heap.HostObjects;
 import com.mimicvm.vm.utils.ValueTranslator;
 
@@ -23,7 +24,11 @@ public final class ReflectCallInvoker implements ICallInvoker {
     }
 
     public ReflectCallInvoker(HostObjects objects) {
-        this(Thread.currentThread().getContextClassLoader(), new ValueTranslator(objects));
+        this(new Heap(), objects);
+    }
+
+    public ReflectCallInvoker(Heap heap, HostObjects objects) {
+        this(Thread.currentThread().getContextClassLoader(), new ValueTranslator(heap, objects));
     }
 
     public ReflectCallInvoker(ClassLoader loader) {

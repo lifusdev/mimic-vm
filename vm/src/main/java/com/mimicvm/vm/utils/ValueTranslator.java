@@ -1,11 +1,24 @@
 package com.mimicvm.vm.utils;
 
 import com.mimicvm.shared.type.Value;
+import com.mimicvm.vm.heap.HostObjects;
+
+import java.util.Objects;
 
 /**
  * Translates values between the vm and java
  */
 public final class ValueTranslator {
+
+    private final HostObjects hObjects;
+
+    public ValueTranslator() {
+        this(new HostObjects());
+    }
+
+    public ValueTranslator(HostObjects hObjects) {
+        this.hObjects = Objects.requireNonNull(hObjects, "objects must not be null");
+    }
 
     public Object toJava(Value value, Class<?> type) {
         if (type == boolean.class) {
@@ -33,9 +46,14 @@ public final class ValueTranslator {
             return value.asF64();
         }
 
-        
+
         if (value.equals(Value.NULL)) {
             return null;
+        }
+
+        if (!type.isPrimitive()) {
+            // the vm ref points to a java object
+            return type.cast(hObjects.get(value.refId()));
         }
 
         // TODO

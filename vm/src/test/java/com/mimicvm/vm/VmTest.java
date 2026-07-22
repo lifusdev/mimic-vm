@@ -13,6 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class VmTest implements Opcodes {
 
     @Test
+    void stringRef() {
+        final byte[] insns = {
+                (byte) STRING_CONST, 0x0, // same string
+                (byte) STRING_CONST, 0x0, // x2
+                (byte) I32_EQ, // cmp
+                (byte) RETURN
+        };
+
+        final VModule module = new VModule(new String[0], new String[]{"mimic"}, new VMethod[]{
+                new VMethod(0, 2, 0, insns)
+        });
+
+        // Both refs are identical $$$
+        assertEquals(Value.i32(1), new Interpreter(module, 0).run());
+    }
+
+    @Test
     void javaCallWithString() {
         final byte[] insns = {
                 (byte) STRING_CONST, 0x0, // 0

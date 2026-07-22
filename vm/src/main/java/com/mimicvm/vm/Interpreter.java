@@ -587,10 +587,21 @@ public final class Interpreter implements Opcodes {
                 case STRING_CONST -> {
                     final int poolIdx = cursor.nextU8();
                     final String str = module.constant(poolIdx);
-                    final int ref = heap.alloc(0); // string has 0 instance fields
+                    //final int ref = heap.alloc(0); // string has 0 instance fields
 
-                    hostObjects.put(ref, str);
-                    frame.stack().push(Value.ref(ref));
+                    //hostObjects.put(ref, str);
+                    //frame.stack().push(Value.ref(ref));
+
+                    final int knownRef = hostObjects.refOf(str);
+
+                    if (knownRef != 0) {
+                        frame.stack().push(Value.ref(knownRef));
+                    } else {
+                        final int ref = heap.alloc(0);
+
+                        hostObjects.put(ref, str);
+                        frame.stack().push(Value.ref(ref));
+                    }
                 }
 
                 case ACONST_NULL -> frame.stack().push(Value.NULL);

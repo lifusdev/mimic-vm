@@ -52,12 +52,8 @@ public final class ReflectCallInvoker implements ICallInvoker {
                 throw new IllegalArgumentException("method must be static: " + call);
             }
 
-            final Object[] javaArgs = new Object[args.length];
-
             // each vm value becomes the corresponding java value
-            for (int i = 0; i < args.length; i++) {
-                javaArgs[i] = values.toJava(args[i], type.parameterType(i));
-            }
+            final Object[] javaArgs = toJavaArgs(type, args);
 
             final Object result = method.invoke(null, javaArgs);
             return values.toValue(result, type.returnType());
@@ -79,16 +75,22 @@ public final class ReflectCallInvoker implements ICallInvoker {
 
             // the receiver is the target of the call
             final Object target = Objects.requireNonNull(values.toJava(receiver, owner), "receiver must not be null");
-            final Object[] javaArgs = new Object[args.length];
-
-            for (int i = 0; i < args.length; i++) {
-                javaArgs[i] = values.toJava(args[i], type.parameterType(i));
-            }
+            final Object[] javaArgs = toJavaArgs(type, args);
 
             final Object result = method.invoke(target, javaArgs);
             return values.toValue(result, type.returnType());
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("instance call failed: " + call, e);
         }
+    }
+
+    private Object[] toJavaArgs(MethodType type, Value[] args) {
+        final Object[] res = new Object[args.length];
+
+        for (int i = 0; i < args.length; i++) {
+            res[i] = values.toJava(args[i], type.parameterType(i));
+        }
+
+        return res;
     }
 }

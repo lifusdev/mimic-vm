@@ -71,7 +71,7 @@ public final class ReflectCallInvoker implements ICallInvoker {
         try {
             final Class<?> owner = Class.forName(call.owner().replace('/', '.'), true, loader);
             final MethodType type = MethodType.fromMethodDescriptorString(call.desc(), loader);
-            final Method method = owner.getDeclaredMethod(call.name(), type.parameterArray());
+            final Method method = owner.getMethod(call.name(), type.parameterArray());
 
             if (Modifier.isStatic(method.getModifiers())) {
                 throw new IllegalArgumentException("method must not be static: " + call);

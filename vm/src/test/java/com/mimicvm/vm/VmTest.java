@@ -14,6 +14,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class VmTest implements Opcodes {
 
     @Test
+    void inheritedInstCall() {
+        final byte[] insns = {
+                (byte) STRING_CONST, 0x0, // 0
+                (byte) CALL_INSTANCE, 0x0, // 0
+                (byte) CALL_INSTANCE, 0x1, // 1
+                (byte) CALL_INSTANCE, 0x2, // 2
+                (byte) RETURN
+        };
+
+        final VModule module = new VModule(new String[0], new String[]{
+                "string"
+        }, new Type[0], new Type[0], new InstCall[]{
+                // String.class
+                // from java.lang.Object
+                new InstCall("java/lang/String", "getClass", "()Ljava/lang/Class;"),
+                // java.lang.String
+                new InstCall("java/lang/Class", "getName", "()Ljava/lang/String;"),
+                // 16
+                new InstCall("java/lang/String", "length", "()I")
+        }, new VMethod[]{new VMethod(0, 1, 0, insns)});
+
+        assertEquals(Value.i32(16), new Interpreter(module, 0).run());
+    }
+
+    @Test
     void instanceCall() {
         final byte[] insns = {
                 (byte) STRING_CONST, 0x0, // 0

@@ -14,6 +14,7 @@ import com.mimicvm.vm.frame.Frame;
 import com.mimicvm.vm.heap.Heap;
 import com.mimicvm.vm.heap.HostObjects;
 import com.mimicvm.vm.utils.Utils;
+import com.mimicvm.vm.utils.ValueTranslator;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ public final class Interpreter implements Opcodes {
 
     private final Deque<Frame> callStack = new ArrayDeque<>();
     private final Heap heap;
-    private final HostObjects hostObjects;
+    private final ValueTranslator values;
 
     private final Map<Integer, Value> statics = new HashMap<>();
 
@@ -49,7 +50,7 @@ public final class Interpreter implements Opcodes {
         this.module = module;
         this.callInvoker = Objects.requireNonNull(callInvoker, "callInvoker must not be null");
         this.heap = Objects.requireNonNull(heap, "heap must not be null");
-        this.hostObjects = Objects.requireNonNull(hostObjects, "hostObjects must not be null");
+        this.values = new ValueTranslator(this.heap, hostObjects);
 
         //before the first method call
         for (int i = 0; i < module.staticTypes().length; i++) {
@@ -587,21 +588,19 @@ public final class Interpreter implements Opcodes {
                 case STRING_CONST -> {
                     final int poolIdx = cursor.nextU8();
                     final String str = module.constant(poolIdx);
-                    //final int ref = heap.alloc(0); // string has 0 instance fields
 
-                    //hostObjects.put(ref, str);
-                    //frame.stack().push(Value.ref(ref));
+//                    final int knownRef = hostObjects.refOf(str);
+//
+//                    if (knownRef != 0) {
+//                        frame.stack().push(Value.ref(knownRef));
+//                    } else {
+//                        final int ref = heap.alloc(0);
+//
+//                        hostObjects.put(ref, str);
+//                        frame.stack().push(Value.ref(ref));
+//                    }
 
-                    final int knownRef = hostObjects.refOf(str);
-
-                    if (knownRef != 0) {
-                        frame.stack().push(Value.ref(knownRef));
-                    } else {
-                        final int ref = heap.alloc(0);
-
-                        hostObjects.put(ref, str);
-                        frame.stack().push(Value.ref(ref));
-                    }
+                    frame.stack().push(values.toValue(str, String.class));
                 }
 
                 case ACONST_NULL -> frame.stack().push(Value.NULL);

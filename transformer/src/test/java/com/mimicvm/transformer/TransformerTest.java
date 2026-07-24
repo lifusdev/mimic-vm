@@ -83,8 +83,58 @@ import static org.objectweb.asm.Opcodes.*;
 //    }
 //}
 
+//class Mimic {
+//    @VirtualizeMe
+//    public static int idk() {
+//        AtomicInteger i = new AtomicInteger(256);
+//        return i.get();
+//    }
+//}
+
 
 class TransformerTest {
+
+    @Test
+    void ctorCall() {
+        ClassWriter classWriter = new ClassWriter(0);
+        MethodVisitor methodVisitor;
+        AnnotationVisitor annotationVisitor0;
+
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Mimic", null, "java/lang/Object", null);
+
+        {
+            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
+            methodVisitor.visitCode();
+            methodVisitor.visitVarInsn(ALOAD, 0);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+            methodVisitor.visitInsn(RETURN);
+            methodVisitor.visitMaxs(1, 1);
+            methodVisitor.visitEnd();
+        }
+        {
+            methodVisitor = classWriter.visitMethod(ACC_PUBLIC | ACC_STATIC, "idk", "()I", null, null);
+            {
+                annotationVisitor0 = methodVisitor.visitAnnotation("Lcom/mimicvm/annotations/VirtualizeMe;", false);
+                annotationVisitor0.visitEnd();
+            }
+            methodVisitor.visitCode();
+            methodVisitor.visitTypeInsn(NEW, "java/util/concurrent/atomic/AtomicInteger");
+            methodVisitor.visitInsn(DUP);
+            methodVisitor.visitIntInsn(SIPUSH, 256);
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/util/concurrent/atomic/AtomicInteger", "<init>", "(I)V", false);
+            methodVisitor.visitVarInsn(ASTORE, 0);
+            methodVisitor.visitVarInsn(ALOAD, 0);
+            methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/util/concurrent/atomic/AtomicInteger", "get", "()I", false);
+            methodVisitor.visitInsn(IRETURN);
+            methodVisitor.visitMaxs(3, 1);
+            methodVisitor.visitEnd();
+        }
+        classWriter.visitEnd();
+
+        final VModule module = new Transformer(classWriter.toByteArray()).module();
+
+        assertEquals(Value.i32(256), new Interpreter(module, 0).run());
+    }
 
     @Test
     void instCall() {

@@ -1,5 +1,6 @@
 package com.mimicvm.vm.call;
 
+import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
 import com.mimicvm.shared.type.Value;
@@ -8,6 +9,7 @@ import com.mimicvm.vm.heap.HostObjects;
 import com.mimicvm.vm.utils.ValueTranslator;
 
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
@@ -81,6 +83,20 @@ public final class ReflectCallInvoker implements ICallInvoker {
             return values.toValue(result, type.returnType());
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException("instance call failed: " + call, e);
+        }
+    }
+
+    @Override
+    public void invoke(CtorCall call, Value receiver, Value... args) {
+        try {
+            final Class<?> owner = Class.forName(call.owner().replace('/', '.'), true, loader);
+            final MethodType type = MethodType.fromMethodDescriptorString(call.desc(), loader);
+            final Constructor<?> ctor = owner.getConstructor(type.parameterArray());
+            final Object target = ctor.newInstance(toJavaArgs(type, args));
+
+            values.bind(receiver, target);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("ctor call failed: " + call, e);
         }
     }
 

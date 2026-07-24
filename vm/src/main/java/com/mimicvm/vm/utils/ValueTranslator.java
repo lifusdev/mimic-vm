@@ -27,6 +27,10 @@ public final class ValueTranslator {
         this.hObjects = Objects.requireNonNull(hObjects, "objects must not be null");
     }
 
+    public void bind(Value ref, Object value) {
+        hObjects.put(ref.refId(), value);
+    }
+
     public Object toJava(Value value, Class<?> type) {
         if (type == boolean.class) {
             return value.asI32() != 0;

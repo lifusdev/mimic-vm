@@ -30,7 +30,7 @@ public final class ReflectionUtils {
                 }
 
                 if (!method.trySetAccessible()) {
-                    throw new IllegalStateException("method must be accessible: " + type.getName() + "." + name);
+                    throw new IllegalStateException("method must be accessible: " + type.getName() + "#" + name);
                 }
 
                 return method;

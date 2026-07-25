@@ -91,7 +91,14 @@ public final class ReflectCallInvoker implements ICallInvoker {
         try {
             final Class<?> owner = Class.forName(call.owner().replace('/', '.'), true, loader);
             final MethodType type = MethodType.fromMethodDescriptorString(call.desc(), loader);
-            final Constructor<?> ctor = owner.getConstructor(type.parameterArray());
+
+            // Class#getConstructor only finds public ctors
+            final Constructor<?> ctor = owner.getDeclaredConstructor(type.parameterArray());
+            
+            if (!ctor.trySetAccessible()) {
+                throw new IllegalStateException("ctor must be accessible: " + call);
+            }
+
             final Object target = ctor.newInstance(toJavaArgs(type, args));
 
             values.bind(receiver, target);

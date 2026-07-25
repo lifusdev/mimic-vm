@@ -6,6 +6,7 @@ import com.mimicvm.shared.call.StaticCall;
 import com.mimicvm.shared.type.Value;
 import com.mimicvm.vm.heap.Heap;
 import com.mimicvm.vm.heap.HostObjects;
+import com.mimicvm.vm.utils.ReflectionUtils;
 import com.mimicvm.vm.utils.ValueTranslator;
 
 import java.lang.invoke.MethodType;
@@ -69,7 +70,7 @@ public final class ReflectCallInvoker implements ICallInvoker {
         try {
             final Class<?> owner = Class.forName(call.owner().replace('/', '.'), true, loader);
             final MethodType type = MethodType.fromMethodDescriptorString(call.desc(), loader);
-            final Method method = owner.getMethod(call.name(), type.parameterArray());
+            final Method method = ReflectionUtils.findMethod(owner, call.name(), type.parameterArray());
 
             if (Modifier.isStatic(method.getModifiers())) {
                 throw new IllegalArgumentException("method must not be static: " + call);
@@ -94,7 +95,7 @@ public final class ReflectCallInvoker implements ICallInvoker {
 
             // Class#getConstructor only finds public ctors
             final Constructor<?> ctor = owner.getDeclaredConstructor(type.parameterArray());
-            
+
             if (!ctor.trySetAccessible()) {
                 throw new IllegalStateException("ctor must be accessible: " + call);
             }

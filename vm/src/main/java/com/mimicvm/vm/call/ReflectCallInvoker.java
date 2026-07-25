@@ -10,7 +10,6 @@ import com.mimicvm.vm.utils.ReflectionUtils;
 import com.mimicvm.vm.utils.ValueTranslator;
 
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
@@ -92,15 +91,7 @@ public final class ReflectCallInvoker implements ICallInvoker {
         try {
             final Class<?> owner = Class.forName(call.owner().replace('/', '.'), true, loader);
             final MethodType type = MethodType.fromMethodDescriptorString(call.desc(), loader);
-
-            // Class#getConstructor only finds public ctors
-            final Constructor<?> ctor = owner.getDeclaredConstructor(type.parameterArray());
-
-            if (!ctor.trySetAccessible()) {
-                throw new IllegalStateException("ctor must be accessible: " + call);
-            }
-
-            final Object target = ctor.newInstance(toJavaArgs(type, args));
+            final Object target = ReflectionUtils.findCtor(owner, type.parameterArray()).newInstance(toJavaArgs(type, args));
 
             values.bind(receiver, target);
         } catch (ReflectiveOperationException e) {

@@ -1,5 +1,6 @@
 package com.mimicvm.vm.utils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 public final class ReflectionUtils {
@@ -22,5 +23,16 @@ public final class ReflectionUtils {
 
             return method;
         }
+    }
+
+    public static Constructor<?> findCtor(Class<?> owner, Class<?>[] params) throws NoSuchMethodException {
+        // Class#getConstructor only finds public ctors
+        final Constructor<?> ctor = owner.getDeclaredConstructor(params);
+
+        if (!ctor.trySetAccessible()) {
+            throw new IllegalStateException("ctor must be accessible: " + ctor);
+        }
+
+        return ctor;
     }
 }

@@ -14,7 +14,7 @@ public final class ReflectionUtils {
      */
     public static Method findMethod(Class<?> owner, String name, Class<?>[] params) throws NoSuchMethodException {
         try {
-            return owner.getMethod(name, params);
+            return makeAccessible(owner.getMethod(name, params));
         } catch (NoSuchMethodException ignored) {
             return findDeclaredMethod(owner, name, params);
         }
@@ -29,16 +29,23 @@ public final class ReflectionUtils {
                     continue;
                 }
 
-                if (!method.trySetAccessible()) {
-                    throw new IllegalStateException("method must be accessible: " + type.getName() + "#" + name);
-                }
-
-                return method;
+                return makeAccessible(method);
             } catch (NoSuchMethodException ignored) {
             }
         }
 
         throw new NoSuchMethodException(owner.getName() + "#" + name);
+    }
+
+    /**
+     * FIX: public methods can also be in private classes (edge case)
+     */
+    private static Method makeAccessible(Method method) {
+        if (!method.trySetAccessible()) {
+            throw new IllegalStateException("method must be accessible: " + method);
+        }
+
+        return method;
     }
 
     public static Constructor<?> findCtor(Class<?> owner, Class<?>[] params) throws NoSuchMethodException {

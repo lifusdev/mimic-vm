@@ -3,6 +3,7 @@ package com.mimicvm.vm.utils;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -24,6 +25,15 @@ class ReflectionUtilsTest {
 
         final PrivateCtor obj = (PrivateCtor) ctor.newInstance(99);
         assertEquals(99, obj.value);
+    }
+
+    @Test
+    void findPublicMethodInPrivateClass() throws ReflectiveOperationException {
+        final Method method = ReflectionUtils.findMethod(PrivateCtor.class, "value", new Class<?>[0]);
+        final PrivateCtor obj = new PrivateCtor(99);
+
+        assertTrue(method.canAccess(obj));
+        assertEquals(99, method.invoke(obj));
     }
 
     private record PublicCtor(String value) {

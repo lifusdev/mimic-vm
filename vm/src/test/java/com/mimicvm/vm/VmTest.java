@@ -1,5 +1,7 @@
 package com.mimicvm.vm;
 
+import com.mimicvm.shared.call.CtorCall;
+import com.mimicvm.shared.call.ICall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
 import com.mimicvm.shared.code.VMethod;
@@ -12,6 +14,23 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VmTest implements Opcodes {
+
+    @Test
+    void privateCtorCall() {
+        final String owner = PrivateCtor.class.getName().replace('.', '/');
+
+        final byte[] insns = {
+                (byte) NEW, 0x0, 0x0, (byte) DUP, (byte) I32_CONST, 0x0, 0x0, 0x0, 0x63, (byte) CALL_CTOR, 0x0,
+                (byte) CALL_INSTANCE, 0x1, // #value
+                (byte) RETURN
+        };
+
+        final VModule module = new VModule(new String[]{owner}, new String[0], new Type[0], new Type[0], new ICall[]{
+                new CtorCall(owner, "(I)V"), new InstCall(owner, "value", "()I")
+        }, new VMethod[]{new VMethod(0, 3, 0, insns)});
+
+        assertEquals(Value.i32(99), new Interpreter(module, 0).run());
+    }
 
     @Test
     void inheritedInstCall() {
@@ -268,5 +287,8 @@ class VmTest implements Opcodes {
         final Value result = new Interpreter(module, 0).run();
 
         assertEquals(Value.i32(3), result);
+    }
+
+    private record PrivateCtor(int value) {
     }
 }

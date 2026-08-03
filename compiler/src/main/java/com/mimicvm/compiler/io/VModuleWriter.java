@@ -1,4 +1,4 @@
-package com.mimicvm.compiler;
+package com.mimicvm.compiler.io;
 
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.ICall;
@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public final class ModuleWriter {
+public final class VModuleWriter {
 
     public static final int MAGIC = 0x4D4D564D; // MMVM
     public static final int VERSION = 1;

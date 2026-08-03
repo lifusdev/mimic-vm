@@ -1,1 +1,5 @@
-javaLibrary {}
+javaLibrary {
+    dependencies {
+        implementation(project(":shared"))
+    }
+}

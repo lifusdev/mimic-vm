@@ -4,6 +4,7 @@ import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.ICall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
+import com.mimicvm.shared.code.Handler;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.type.Type;
@@ -61,7 +62,20 @@ public final class VModuleReader {
         final byte[] insns = new byte[dis.readInt()];
         dis.readFully(insns);
 
-        return new VMethod(paramCount, maxStack, maxLocals, insns);
+        final Handler[] handlers = readHandlers(dis);
+
+        return new VMethod(paramCount, maxStack, maxLocals, insns, handlers);
+    }
+
+    private Handler[] readHandlers(DataInputStream dis) throws IOException {
+        final int count = dis.readInt();
+        final Handler[] handlers = new Handler[count];
+
+        for (int i = 0; i < count; i++) {
+            handlers[i] = new Handler(dis.readInt(), dis.readInt(), dis.readInt(), dis.readInt());
+        }
+
+        return handlers;
     }
 
     private String[] readStrings(DataInputStream dis) throws IOException {

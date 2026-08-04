@@ -4,6 +4,7 @@ import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.ICall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
+import com.mimicvm.shared.code.Handler;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.type.Type;
@@ -73,6 +74,20 @@ public final class VModuleWriter {
         // length first for reader
         dos.writeInt(insns.length);
         dos.write(insns);
+
+        // try-catch table
+        writeHandlers(dos, method.handlers());
+    }
+
+    private void writeHandlers(DataOutputStream dos, Handler[] handlers) throws IOException {
+        dos.writeInt(handlers.length);
+
+        for (Handler h : handlers) {
+            dos.writeInt(h.start());
+            dos.writeInt(h.end());
+            dos.writeInt(h.target());
+            dos.writeInt(h.catchType());
+        }
     }
 
     private void writeStrings(DataOutputStream dos, String[] strings) throws IOException {
@@ -101,24 +116,27 @@ public final class VModuleWriter {
     }
 
     private void writeCall(DataOutputStream dos, ICall call) throws IOException {
-        if (call instanceof StaticCall) {
-            dos.writeByte(K_STATIC);
-            dos.writeUTF(call.owner());
-            dos.writeUTF(call.name());
-            dos.writeUTF(call.desc());
-        } else if (call instanceof InstCall) {
-            dos.writeByte(K_INSTANCE);
-            dos.writeUTF(call.owner());
-            dos.writeUTF(call.name());
-            dos.writeUTF(call.desc());
-        } else if (call instanceof CtorCall) {
-            dos.writeByte(K_CTOR);
-            // the name is ALWAYS <init>,
-            // so there is no need to save it
-            dos.writeUTF(call.owner());
-            dos.writeUTF(call.desc());
-        } else {
-            throw new IllegalArgumentException("Unknown call type: " + call.getClass());
+        switch (call) {
+            case StaticCall staticCall -> {
+                dos.writeByte(K_STATIC);
+                dos.writeUTF(call.owner());
+                dos.writeUTF(call.name());
+                dos.writeUTF(call.desc());
+            }
+            case InstCall instCall -> {
+                dos.writeByte(K_INSTANCE);
+                dos.writeUTF(call.owner());
+                dos.writeUTF(call.name());
+                dos.writeUTF(call.desc());
+            }
+            case CtorCall ctorCall -> {
+                dos.writeByte(K_CTOR);
+                // the name is ALWAYS <init>,
+                // so there is no need to save it
+                dos.writeUTF(call.owner());
+                dos.writeUTF(call.desc());
+            }
+            default -> throw new IllegalArgumentException("Unknown call type: " + call.getClass());
         }
     }
 }

@@ -3,6 +3,7 @@ package com.mimicvm.vm;
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
+import com.mimicvm.shared.code.Handler;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.op.Opcodes;
@@ -76,6 +77,10 @@ public final class Interpreter implements Opcodes {
             if (!cursor.hasNext()) {
                 break;
             }
+
+            // Save the startpos
+            // in case this instruction throws an exception
+            frame.pc(cursor.pos());
 
             final int opc = cursor.nextOp();
 
@@ -613,8 +618,11 @@ public final class Interpreter implements Opcodes {
                 }
 
                 case ATHROW -> {
-                    final Value exRef = frame.stack().pop();
-                    throw new RuntimeException("ATHROW: exception obj ref=" + exRef.refId());
+                    final Value exc = frame.stack().pop();
+
+                    if (!unwind(exc)) {
+                        throw new VmException(exc);
+                    }
                 }
 
                 case STRING_CONST -> {
@@ -738,6 +746,50 @@ public final class Interpreter implements Opcodes {
         }
 
         throw new IllegalStateException("missing RETURN");
+    }
+
+    private boolean unwind(Value exception) {
+        while (!callStack.isEmpty()) {
+            final Frame frame = callStack.element();
+            final Handler handler = findHandler(frame, exception);
+
+            if (handler != null) {
+                /*
+                  The Handler starts with an empty stack
+                  and the exception on top
+                 */
+                frame.stack().clear();
+                frame.stack().push(exception);
+                frame.cursor().seek(handler.target());
+                return true;
+            }
+
+            // continue searching at the caller
+            callStack.pop();
+        }
+
+        return false;
+    }
+
+    /**
+     * First matching handler
+     */
+    private Handler findHandler(Frame frame, Value exception) {
+        for (Handler handler : frame.method().handlers()) {
+            if (handler.covers(frame.pc()) && matches(handler, exception)) {
+                return handler;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean matches(Handler handler, Value exception) {
+        // finally always catches
+        if (handler.catchesAll()) {
+            return true;
+        }
+        return handler.catchType() == heap.get(exception.refId()).typeIdx();
     }
 
 }

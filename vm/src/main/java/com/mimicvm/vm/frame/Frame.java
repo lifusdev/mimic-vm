@@ -9,6 +9,9 @@ public final class Frame {
     private final Stack stack;
     private final Cursor cursor;
 
+    // for Handler
+    private int pc = 0;
+
     public Frame(VMethod method) {
         this.method = method;
         this.locals = new Locals(method.maxLocals());
@@ -30,5 +33,13 @@ public final class Frame {
 
     public Cursor cursor() {
         return cursor;
+    }
+
+    public int pc() {
+        return pc;
+    }
+
+    public void pc(int pc) {
+        this.pc = pc;
     }
 }

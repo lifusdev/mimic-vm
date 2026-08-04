@@ -18,4 +18,9 @@ public final class Stack {
     public Value pop() {
         return elements[--top];
     }
+
+    // before a handler starts
+    public void clear() {
+        top = 0;
+    }
 }

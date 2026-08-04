@@ -28,7 +28,7 @@ public record VMethod(int paramCount, int maxStack, int maxLocals, byte[] insns,
             handlers = new Handler[0];
         }
     }
-    
+
     public VMethod(int paramCount, int maxStack, int maxLocals, byte[] insns) {
         this(paramCount, maxStack, maxLocals, insns, new Handler[0]);
     }

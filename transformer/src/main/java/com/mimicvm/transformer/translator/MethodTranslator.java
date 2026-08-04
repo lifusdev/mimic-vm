@@ -3,6 +3,7 @@ package com.mimicvm.transformer.translator;
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.InstCall;
 import com.mimicvm.shared.call.StaticCall;
+import com.mimicvm.shared.code.Handler;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.utils.ByteUtils;
 import com.mimicvm.shared.utils.DescUtils;
@@ -44,6 +45,12 @@ public final class MethodTranslator extends MethodVisitor {
     }
 
     private final List<Patch> patches = new ArrayList<>();
+
+    // raw
+    private record TryCatch(Label start, Label end, Label handler, String type) {
+    }
+
+    private final List<TryCatch> catches = new ArrayList<>();
 
     public MethodTranslator(IMethodIdx table, IFieldIdx fields, IFieldIdx statics, ICallIdx calls, ITypeIdx types, ConstantPool strings, int access, String desc, Consumer<VMethod> onDone) {
         super(Opcodes.ASM9);
@@ -133,6 +140,12 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.GETSTATIC -> assembler.op(GET_STATIC).u8(statics.indexOf(name, descriptor));
             case Opcodes.PUTSTATIC -> assembler.op(PUT_STATIC).u8(statics.indexOf(name, descriptor));
         }
+    }
+
+    @Override
+    public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
+        // save labels now
+        catches.add(new TryCatch(start, end, handler, type));
     }
 
     @Override
@@ -331,7 +344,7 @@ public final class MethodTranslator extends MethodVisitor {
             case Opcodes.IALOAD, Opcodes.LALOAD, Opcodes.FALOAD, Opcodes.DALOAD, Opcodes.AALOAD, Opcodes.BALOAD,
                  Opcodes.CALOAD, Opcodes.SALOAD -> assembler.op(ARRAY_GET);
 
-            // all array store variants to array_set
+            // all array store variants to ARRAY_SET
             case Opcodes.IASTORE, Opcodes.LASTORE, Opcodes.FASTORE, Opcodes.DASTORE, Opcodes.AASTORE, Opcodes.BASTORE,
                  Opcodes.CASTORE, Opcodes.SASTORE -> assembler.op(ARRAY_SET);
 
@@ -421,7 +434,18 @@ public final class MethodTranslator extends MethodVisitor {
             ByteUtils.writeI32(code, patch.pos(), target);
         }
 
+        // Saved labels => real byte offsets
+        final Handler[] handlers = new Handler[catches.size()];
+        for (int i = 0; i < catches.size(); i++) {
+            final TryCatch tc = catches.get(i);
 
-        onDone.accept(new VMethod(paramCount, maxStack, maxLocals, code));
+
+            // null type = finally
+            final int catchType = tc.type() == null ? Handler.CATCH_ALL : types.indexOf(tc.type());
+
+            handlers[i] = new Handler(labelOffsets.get(tc.start()), labelOffsets.get(tc.end()), labelOffsets.get(tc.handler()), catchType);
+        }
+
+        onDone.accept(new VMethod(paramCount, maxStack, maxLocals, code, handlers));
     }
 }

@@ -42,7 +42,7 @@ public final class HostObjects {
 
         return value;
     }
-    
+
     public Object peek(int ref) {
         return objects.get(ref);
     }

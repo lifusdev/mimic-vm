@@ -1,7 +1,7 @@
-package com.mimicvm.compiler;
+package com.mimicvm.codec;
 
-import com.mimicvm.compiler.io.VModuleReader;
-import com.mimicvm.compiler.io.VModuleWriter;
+import com.mimicvm.codec.io.VModuleReader;
+import com.mimicvm.codec.io.VModuleWriter;
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.ICall;
 import com.mimicvm.shared.call.InstCall;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CompilerTest {
+class CodecTest {
 
     @Test
     void test1() {

@@ -12,7 +12,7 @@ rootProject.name = "mimicvm"
 
 include("annotations")
 include("cli")
-include("compiler")
+include("codec")
 include("shared")
 include("transformer")
 include("vm")

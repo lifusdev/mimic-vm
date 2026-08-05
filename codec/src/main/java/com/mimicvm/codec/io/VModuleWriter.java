@@ -1,4 +1,4 @@
-package com.mimicvm.compiler.io;
+package com.mimicvm.codec.io;
 
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.ICall;

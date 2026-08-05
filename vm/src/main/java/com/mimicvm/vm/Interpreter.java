@@ -29,6 +29,8 @@ public final class Interpreter implements Opcodes {
     private final Deque<Frame> callStack = new ArrayDeque<>();
     private final Heap heap;
     private final ValueTranslator values;
+    
+    private final HostObjects hostObjects;
 
     private final Map<Integer, Value> statics = new HashMap<>();
 
@@ -53,6 +55,7 @@ public final class Interpreter implements Opcodes {
         this.module = module;
         this.callInvoker = Objects.requireNonNull(callInvoker, "callInvoker must not be null");
         this.heap = Objects.requireNonNull(heap, "heap must not be null");
+        this.hostObjects = Objects.requireNonNull(hostObjects, "hostObjects must not be null");
         this.values = new ValueTranslator(this.heap, hostObjects);
 
         //before the first method call
@@ -801,7 +804,28 @@ public final class Interpreter implements Opcodes {
         if (handler.catchesAll()) {
             return true;
         }
+
+        // java
+        final Object host = hostObjects.peek(exception.refId());
+        if (host != null) {
+            return matchesHost(handler, host);
+        }
+
+        // vm
         return handler.catchType() == heap.get(exception.refId()).typeIdx();
+    }
+
+    private boolean matchesHost(Handler handler, Object host) {
+        final String catchName = module.typeName(handler.catchType());
+
+        try {
+            final Class<?> catchType = Class.forName(catchName.replace('/', '.'));
+
+            //also covers superclasses
+            return catchType.isInstance(host);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
 }

@@ -32,7 +32,7 @@ public final class Jar {
                 final String name = entry.getName();
                 final byte[] data = zip.readAllBytes();
 
-                if (hasClassMagic(data) && (name.endsWith(".class") || name.endsWith(".class/"))) {
+                if ((name.endsWith(".class") || name.endsWith(".class/")) && hasClassMagic(data)) {
                     jar.classes.put(name, data);
                 } else {
                     jar.resources.put(name, data);

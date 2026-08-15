@@ -1,4 +1,4 @@
-package com.mimicvm.translator.jar;
+package com.mimicvm.transformer.jar;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +15,9 @@ public final class Jar {
 
     private final Map<String, byte[]> classes = new LinkedHashMap<>();
     private final Map<String, byte[]> resources = new LinkedHashMap<>();
+
+    public Jar() {
+    }
 
     public static Jar read(Path path) throws IOException {
         try (InputStream in = Files.newInputStream(path)) {

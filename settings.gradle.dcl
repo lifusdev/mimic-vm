@@ -15,6 +15,7 @@ include("cli")
 include("codec")
 include("shared")
 include("translator")
+include("transformer")
 include("vm")
 
 defaults {

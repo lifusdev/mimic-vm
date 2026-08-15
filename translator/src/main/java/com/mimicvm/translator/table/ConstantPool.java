@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator.table;
+package com.mimicvm.translator.table;
 
 import java.util.ArrayList;
 import java.util.HashMap;

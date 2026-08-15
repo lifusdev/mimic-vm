@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.jar;
+package com.mimicvm.translator.jar;
 
 import java.io.IOException;
 import java.io.InputStream;

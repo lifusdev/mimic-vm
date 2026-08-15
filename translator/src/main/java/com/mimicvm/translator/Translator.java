@@ -1,9 +1,8 @@
-package com.mimicvm.transformer;
+package com.mimicvm.translator;
 
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.code.VModule;
-import com.mimicvm.transformer.translator.ClassTranslator;
-import com.mimicvm.transformer.translator.table.*;
+import com.mimicvm.translator.table.*;
 import org.objectweb.asm.ClassReader;
 
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Entry point
  */
-public final class Transformer {
+public final class Translator {
 
     private final byte[] bytecode;
     private final ClassReader reader;
@@ -22,7 +21,7 @@ public final class Transformer {
     private TypeTable typeTable;
     private final ConstantPool stringPool = new ConstantPool();
 
-    public Transformer(byte[] bytecode) {
+    public Translator(byte[] bytecode) {
         this.bytecode = bytecode;
         this.reader = new ClassReader(bytecode);
         this.fields = FieldTable.of(bytecode);

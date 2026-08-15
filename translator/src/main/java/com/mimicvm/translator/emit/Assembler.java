@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.emit;
+package com.mimicvm.translator.emit;
 
 import java.io.ByteArrayOutputStream;
 

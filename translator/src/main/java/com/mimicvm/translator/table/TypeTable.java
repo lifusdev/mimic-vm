@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator.table;
+package com.mimicvm.translator.table;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;

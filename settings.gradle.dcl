@@ -14,7 +14,7 @@ include("annotations")
 include("cli")
 include("codec")
 include("shared")
-include("transformer")
+include("translator")
 include("vm")
 
 defaults {

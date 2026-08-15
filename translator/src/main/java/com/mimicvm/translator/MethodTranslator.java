@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator;
+package com.mimicvm.translator;
 
 import com.mimicvm.shared.call.CtorCall;
 import com.mimicvm.shared.call.InstCall;
@@ -7,8 +7,8 @@ import com.mimicvm.shared.code.Handler;
 import com.mimicvm.shared.code.VMethod;
 import com.mimicvm.shared.utils.ByteUtils;
 import com.mimicvm.shared.utils.DescUtils;
-import com.mimicvm.transformer.emit.Assembler;
-import com.mimicvm.transformer.translator.table.*;
+import com.mimicvm.translator.emit.Assembler;
+import com.mimicvm.translator.table.*;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

@@ -1,8 +1,8 @@
-package com.mimicvm.transformer.translator;
+package com.mimicvm.translator;
 
 import com.mimicvm.annotations.VirtualizeMe;
 import com.mimicvm.shared.code.VMethod;
-import com.mimicvm.transformer.translator.table.*;
+import com.mimicvm.translator.table.*;
 import org.objectweb.asm.*;
 
 import java.util.function.Consumer;

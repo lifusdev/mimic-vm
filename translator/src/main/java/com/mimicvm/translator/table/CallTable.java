@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator.table;
+package com.mimicvm.translator.table;
 
 import com.mimicvm.shared.call.ICall;
 

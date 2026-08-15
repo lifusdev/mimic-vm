@@ -1,4 +1,4 @@
-package com.mimicvm.transformer.translator.table;
+package com.mimicvm.translator.table;
 
 /**
  * resolves a field to its slot index.

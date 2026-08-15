@@ -1,4 +1,4 @@
-package com.mimicvm.transformer;
+package com.mimicvm.translator;
 
 import com.mimicvm.annotations.VirtualizeMe;
 import com.mimicvm.shared.code.VMethod;
@@ -92,7 +92,7 @@ import static org.objectweb.asm.Opcodes.*;
 //}
 
 
-class TransformerTest {
+class TranslatorTest {
 
     @Test
     void ctorCall() {
@@ -100,7 +100,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Mimic", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Mimic", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -131,7 +131,7 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        final VModule module = new Transformer(classWriter.toByteArray()).module();
+        final VModule module = new Translator(classWriter.toByteArray()).module();
 
         assertEquals(Value.i32(256), new Interpreter(module, 0).run());
     }
@@ -142,7 +142,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Mimic", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Mimic", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -168,7 +168,7 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        final VModule module = new Transformer(classWriter.toByteArray()).module();
+        final VModule module = new Translator(classWriter.toByteArray()).module();
 
         assertEquals(Value.i32(7), new Interpreter(module, 0).run());
     }
@@ -179,7 +179,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Mimic", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Mimic", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -207,7 +207,7 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        final VModule module = new Transformer(classWriter.toByteArray()).module();
+        final VModule module = new Translator(classWriter.toByteArray()).module();
         final Value result = new Interpreter(module, 0).run();
 
         assertEquals(Value.i32(52), result);
@@ -220,7 +220,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Mimic", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Mimic", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -246,8 +246,8 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        Transformer transformer = new Transformer(classWriter.toByteArray());
-        VModule module = transformer.module();
+        Translator translator = new Translator(classWriter.toByteArray());
+        VModule module = translator.module();
 
         Value result = new Interpreter(module, 0).run();
 
@@ -260,7 +260,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Array", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Array", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -298,9 +298,9 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        Transformer transformer = new Transformer(classWriter.toByteArray());
-        List<VMethod> methods = transformer.translate();
-        VModule module = new VModule(transformer.typeNames(), methods.toArray(new VMethod[0]));
+        Translator translator = new Translator(classWriter.toByteArray());
+        List<VMethod> methods = translator.translate();
+        VModule module = new VModule(translator.typeNames(), methods.toArray(new VMethod[0]));
 
         Value result = new Interpreter(module, 0).run();
 
@@ -313,7 +313,7 @@ class TransformerTest {
         MethodVisitor methodVisitor;
         AnnotationVisitor annotationVisitor0;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/IntArray", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/IntArray", null, "java/lang/Object", null);
 
         {
             methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -343,9 +343,9 @@ class TransformerTest {
         }
         classWriter.visitEnd();
 
-        Transformer transformer = new Transformer(classWriter.toByteArray());
-        List<VMethod> methods = transformer.translate();
-        VModule module = new VModule(transformer.typeNames(), methods.toArray(new VMethod[0]));
+        Translator translator = new Translator(classWriter.toByteArray());
+        List<VMethod> methods = translator.translate();
+        VModule module = new VModule(translator.typeNames(), methods.toArray(new VMethod[0]));
 
         Value result = new Interpreter(module, 0).run();
 
@@ -357,7 +357,7 @@ class TransformerTest {
         ClassWriter classWriter = new ClassWriter(0);
         MethodVisitor methodVisitor;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Hi", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Hi", null, "java/lang/Object", null);
 
 //        {
 //            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -382,7 +382,7 @@ class TransformerTest {
 
         final byte[] bytes = classWriter.toByteArray();
 
-        final List<VMethod> methods = new Transformer(bytes).translate();
+        final List<VMethod> methods = new Translator(bytes).translate();
 
         final VModule module = new VModule(methods.toArray(new VMethod[0]));
 
@@ -397,7 +397,7 @@ class TransformerTest {
         ClassWriter classWriter = new ClassWriter(0);
         MethodVisitor methodVisitor;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/ForLoop", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/ForLoop", null, "java/lang/Object", null);
 
 //        {
 //            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -440,7 +440,7 @@ class TransformerTest {
 
         final byte[] bytes = classWriter.toByteArray();
 
-        final List<VMethod> methods = new Transformer(bytes).translate();
+        final List<VMethod> methods = new Translator(bytes).translate();
 
         final VModule module = new VModule(methods.toArray(new VMethod[0]));
 
@@ -454,7 +454,7 @@ class TransformerTest {
         ClassWriter classWriter = new ClassWriter(0);
         MethodVisitor methodVisitor;
 
-        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/transformer/Ts", null, "java/lang/Object", null);
+        classWriter.visit(V21, ACC_SUPER, "com/mimicvm/translator/Ts", null, "java/lang/Object", null);
 
 //        {
 //            methodVisitor = classWriter.visitMethod(0, "<init>", "()V", null, null);
@@ -495,7 +495,7 @@ class TransformerTest {
 
         final byte[] bytes = classWriter.toByteArray();
 
-        final List<VMethod> methods = new Transformer(bytes).translate();
+        final List<VMethod> methods = new Translator(bytes).translate();
 
         final VModule module = new VModule(methods.toArray(new VMethod[0]));
 

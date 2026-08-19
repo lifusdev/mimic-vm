@@ -3,6 +3,8 @@ package com.mimicvm.vm.runtime;
 import com.mimicvm.shared.code.VModule;
 import com.mimicvm.shared.type.Value;
 import com.mimicvm.vm.Interpreter;
+import com.mimicvm.vm.heap.Heap;
+import com.mimicvm.vm.heap.HostObjects;
 import com.mimicvm.vm.utils.ValueTranslator;
 
 /**
@@ -10,10 +12,27 @@ import com.mimicvm.vm.utils.ValueTranslator;
  */
 public final class Vm {
 
-    private final ValueTranslator values = new ValueTranslator();
+    /**
+     * Heap + HostObjects belong to the Vm instance
+     */
+    private final Heap heap = new Heap();
+    private final HostObjects hostObjects = new HostObjects();
+    private final ValueTranslator values = new ValueTranslator(heap, hostObjects);
 
     public static Object run(VModule module, int methodIdx, Object... args) {
         return new Vm().invoke(module, methodIdx, args);
+    }
+
+    private static Class<?> primitiveOf(Class<?> wrapper) {
+        if (wrapper == Boolean.class) return boolean.class;
+        if (wrapper == Byte.class) return byte.class;
+        if (wrapper == Character.class) return char.class;
+        if (wrapper == Short.class) return short.class;
+        if (wrapper == Integer.class) return int.class;
+        if (wrapper == Long.class) return long.class;
+        if (wrapper == Float.class) return float.class;
+        if (wrapper == Double.class) return double.class;
+        return null;
     }
 
     /**
@@ -25,7 +44,8 @@ public final class Vm {
             vmArgs[i] = toVmArg(args[i]);
         }
 
-        final Value result = new Interpreter(module, methodIdx, vmArgs).run();
+        // The interpreter shares the Heap and HostObjects with this Vm instance
+        final Value result = new Interpreter(module, methodIdx, heap, hostObjects, vmArgs).run();
 
         return toJava(result);
     }
@@ -41,8 +61,7 @@ public final class Vm {
             return values.toValue(arg, prim);
         }
 
-
-        throw new UnsupportedOperationException("Not supported yet: " + arg.getClass().getName());
+        return values.toValue(arg, Object.class);
     }
 
     // convert VM result back into a Java obj
@@ -57,24 +76,8 @@ public final class Vm {
             case F32 -> result.asF32();
             case F64 -> result.asF64();
             case VOID -> null;
-            case REF -> result.equals(Value.NULL) ? null : unsupportedRef();
+            // ref points to a java obj  => simply return it
+            case REF -> result.equals(Value.NULL) ? null : values.toJava(result, Object.class);
         };
-    }
-
-    private static Object unsupportedRef() {
-        throw new UnsupportedOperationException("NOT SUPPORTED YET");
-    }
-    
-
-    private static Class<?> primitiveOf(Class<?> wrapper) {
-        if (wrapper == Boolean.class) return boolean.class;
-        if (wrapper == Byte.class) return byte.class;
-        if (wrapper == Character.class) return char.class;
-        if (wrapper == Short.class) return short.class;
-        if (wrapper == Integer.class) return int.class;
-        if (wrapper == Long.class) return long.class;
-        if (wrapper == Float.class) return float.class;
-        if (wrapper == Double.class) return double.class;
-        return null;
     }
 }

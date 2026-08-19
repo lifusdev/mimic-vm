@@ -29,7 +29,7 @@ public final class Interpreter implements Opcodes {
     private final Deque<Frame> callStack = new ArrayDeque<>();
     private final Heap heap;
     private final ValueTranslator values;
-    
+
     private final HostObjects hostObjects;
 
     private final Map<Integer, Value> statics = new HashMap<>();
@@ -42,7 +42,7 @@ public final class Interpreter implements Opcodes {
         this(module, methodIdx, new Heap(), new HostObjects(), args);
     }
 
-    private Interpreter(VModule module, int methodIdx, Heap heap, HostObjects hostObjects, Value... args) {
+    public Interpreter(VModule module, int methodIdx, Heap heap, HostObjects hostObjects, Value... args) {
         // Interpreter and java calls share their objs
         this(module, methodIdx, new ReflectCallInvoker(heap, hostObjects), heap, hostObjects, args);
     }

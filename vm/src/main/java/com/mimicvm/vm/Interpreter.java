@@ -550,6 +550,11 @@ public final class Interpreter implements Opcodes {
 
                             if (key == matchKey) {
                                 target = matchTarget;
+                                break;
+                            }
+
+                            if (matchKey > key) {
+                                break;
                             }
                         }
 
